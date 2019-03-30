@@ -1,0 +1,159 @@
+import { List, Map, fromJS } from "immutable";
+import { handleActions, createAction} from "redux-actions";
+import * as api from "../lib/api";
+import { pender, applyPenders} from "redux-pender";
+
+
+const CHANGE = "editor/CHANGE";
+const INIT = "editor/INIT";
+const TOGGLE = "editor/TOGGLE";
+const SAVE = "editor/SAVE";
+
+const CLOSE_STATUS = "editor/CLOSE_STATUS";
+const CLOSE_MESSAGE = "editor/CLOSE_MESSAGE";
+
+const UNMOUNT = "editor/UNMOUNT";
+const ERROR = "editor/ERROR";
+
+const SUBMIT = "editor/SUBMIT";
+
+export const toggle = createAction(TOGGLE);
+export const init = createAction(INIT, api.getEditor);
+export const change = createAction(CHANGE, content => content);
+export const save = createAction(SAVE, api.save);
+
+export const closeStatus = createAction(CLOSE_STATUS);
+export const closeMessage = createAction(CLOSE_MESSAGE);
+
+export const unmount = createAction(UNMOUNT);
+export const error = createAction(ERROR);
+
+export const submit = createAction(SUBMIT, api.endEdit);
+
+let id = 0;
+const initialState = Map({
+    editor:Map({
+        content:""
+    }),
+    message:Map({
+        title: "",
+        content: "",
+        modal: false
+    }),
+    status: Map({
+        content: "",
+        error: false
+    }),
+    statusToggle:false,
+    toggle:false
+});
+const reducer = handleActions({
+    [ERROR]: (state,action) => {
+        const { payload: value } = action;
+        return state.setIn(["message", "modal"], true)
+            .setIn(["message", "title"],"Error")
+            .setIn(["message", "content"],value);
+
+    },
+    [TOGGLE]: (state,action) => {
+        return state.update("toggle", check => !check);
+
+    },
+    [UNMOUNT]: (state,action) => {
+        return state.setIn(["editor","content"], "")
+            .set("toggle",false)
+            .setIn(["message", "modal"], false)
+            .setIn(["message", "title"],"")
+            .setIn(["message", "content"],"");
+
+    },
+    [CHANGE]: (state, { payload: content }) => {
+        return state.setIn(["editor","content"], content);
+    },
+    [CLOSE_MESSAGE]: (state, action) => {
+        return state.setIn(["message", "modal"], false);
+    },
+    [CLOSE_STATUS]: (state, action) => {
+        return state.set("statusToggle",false);
+    }
+}, initialState);
+
+export default applyPenders(reducer, [
+    {
+        type: INIT,
+        onSuccess: (state, action) => {
+            const {data: post} = action.payload;
+            const response = post.Response.response;
+            const result = response.result;
+            const template = response.template;
+
+            if(result)
+                return state.setIn(["editor","content"], template);
+        },
+        onError: (state, action) => {
+            const {data: post, status: status} = action.payload.response;
+            if(status === 401 && !post.Response.response.result){
+                return state.setIn(["message", "modal"], true)
+                    .setIn(["message", "title"],"Error")
+                    .setIn(["message", "content"],"로그인이 필요한 서비스입니다.");
+            }
+            else{
+                return state.setIn(["message", "modal"], true)
+                    .setIn(["message", "title"],"Error")
+                    .setIn(["message", "content"],"서버와 연결에 문제가 발생했습니다.");
+            }
+        }
+    },
+    {
+        type: SAVE,
+        onSuccess: (state, action) => {
+            const {data: post} = action.payload;
+            const response = post.Response.response;
+            const result = response.result;
+
+            if(result)
+                return state.set("statusToggle",true)
+                    .setIn(["status", "error"], false)
+                    .setIn(["status", "content"],"저장에 성공했습니다.");
+        },
+        onError: (state, action) => {
+            const {data: post, status: status} = action.payload.response;
+            if(status === 401 && !post.Response.response.result){
+                return state.set("statusToggle",true)
+                    .setIn(["status", "error"], true)
+                    .setIn(["status", "content"],"저장에 실패했습니다.");
+            }
+            else{
+                return state.setIn(["message", "modal"], true)
+                    .setIn(["message", "title"],"Error")
+                    .setIn(["message", "content"],"서버와 연결에 문제가 발생했습니다.");
+            }
+        }
+    },
+    {
+        type: SUBMIT,
+        onSuccess: (state, action) => {
+            const {data: post} = action.payload;
+            const response = post.Response.response;
+            const result = response.result;
+
+            if(result)
+                return state.set("statusToggle",true)
+                    .setIn(["status", "error"], false)
+                    .setIn(["status", "content"],"저장에 성공했습니다.");
+        },
+        onError: (state, action) => {
+            const {data: post, status: status} = action.payload.response;
+            if(status === 401 && !post.Response.response.result){
+                return state.set("statusToggle",true)
+                    .setIn(["status", "error"], true)
+                    .setIn(["status", "content"],"저장에 실패했습니다.");
+            }
+            else{
+                return state.setIn(["message", "modal"], true)
+                    .setIn(["message", "title"],"Error")
+                    .setIn(["message", "content"],"서버와 연결에 문제가 발생했습니다.");
+            }
+        }
+    }
+]);
