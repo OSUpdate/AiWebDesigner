@@ -9,12 +9,12 @@ var router = express.Router();
 const pool = mysql.createPool({
     host: "localhost",
     user: "root",
-    password: "tjdwls124",
+    password: "",
     database: "aws"
 });
 const server = emailjs.server.connect({
-    user: "force185@naver.com",
-    password: "tjdwls4358",
+    user: "",
+    password: "",
     host: "smtp.naver.com",
     port: 465,
     ssl: true
