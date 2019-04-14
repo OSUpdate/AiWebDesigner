@@ -15,7 +15,7 @@ var app = express();
 
 
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
+
 app.set("view engine", "jade");
 
 
@@ -30,9 +30,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/templates",express.static(path.join(__dirname+"/routes/api/Templates")));
 app.use("/png",express.static(path.join(__dirname+"/png")));
-app.use('/editor', function (req, res, next) {
-    return express.static(`${__dirname}/user`, { index: 'default.html' }).apply(this, arguments);
-  });
+app.use("/editor", function (req, res, next) {
+    return express.static(`${__dirname}/user`, { index: "default.html" }).apply(this, arguments);
+});
 app.use(session({
     secret: "test",
     resave: false,
@@ -54,7 +54,9 @@ app.use(function(err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render("error");
+    res.redirect( "http://127.0.0.1:3001/404");
+    res.end();
+    //res.render("/");
 });
 
 module.exports = app;
