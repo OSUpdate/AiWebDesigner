@@ -24,6 +24,7 @@ module.exports = {
         
     mode:"development",
     output: {
+        publicPath: "/",
         path: path.resolve(__dirname + "/public/"),
         filename: "[name].[hash].js",
         chunkFilename: "[name].[chunkhash].chunk.js"
@@ -38,7 +39,19 @@ module.exports = {
             "/api/" : {
                 target: "http://localhost:3000",
                 changeOrigin : true
-            }
+            },
+            "/templates/" :{
+                target: "http://localhost:3000",
+                changeOrigin : true
+            },
+            "/png/" :{
+                target: "http://localhost:3000",
+                changeOrigin : true
+            },
+            "/editor":{
+                target: "http://localhost:3000",
+                changeOrigin : true
+            },
         }
     },
     resolve: {

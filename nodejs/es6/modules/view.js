@@ -19,6 +19,8 @@ const ERROR = "view/ERROR";
 const UPDATE = "view/UPDATE";
 const UPDATE_TEMPLATE = "view/UPDATE_TEMPLATE";
 
+const DELETE_HTML = "view/DELETE_HTML";
+
 export const init = createAction(INIT, api.getView);
 
 export const toggle = createAction(TOGGLE, id => id);
@@ -35,9 +37,16 @@ export const cancelChecked = createAction(CANCEL_CHECKED);
 export const unmount = createAction(UNMOUNT);
 export const error = createAction(ERROR);
 
+export const deleteHtml = createAction(DELETE_HTML, api.deleteHtml);
+
 const initialState = Map({
     view:List(),
     message:Map({
+        title: "",
+        content: "",
+        modal: false
+    }),
+    continue:Map({
         title: "",
         content: "",
         modal: false
@@ -84,10 +93,16 @@ export default applyPenders(reducer,[
         onSuccess: (state, action) => {
             const {data: post} = action.payload;
             const response = post.Response.response;
+            const over = response.continue;
             const source = response.src;
             const templates = fromJS(response.templates);
             const filename = response.name;
             const result = response.result;
+            if(over){
+                return state.setIn(["continue", "modal"], true)
+                    .setIn(["continue", "title"],"Continue")
+                    .setIn(["continue", "content"],"이전에 중단된 작업을 계속 하시겠습니까?");
+            }
             const test = templates.map((item, index) => {
                 return Map({
                     id: index,
@@ -141,6 +156,32 @@ export default applyPenders(reducer,[
             if(result){
                 return state.set("view", test)
                     .set("template", true);
+            }
+        },
+        onError: (state, action) => {
+            const {data: post, status: status} = action.payload.response;
+            if(status === 401 && !post.Response.response.result){
+                return state.setIn(["message", "modal"], true)
+                    .setIn(["message", "title"],"Error")
+                    .setIn(["message", "content"],"로그인이 필요한 서비스입니다.");
+            }
+            else{
+                return state.setIn(["message", "modal"], true)
+                    .setIn(["message", "title"],"Error")
+                    .setIn(["message", "content"],"서버와 연결에 문제가 발생했습니다.");
+            }
+        }
+    },
+    {
+        type: DELETE_HTML,
+        onSuccess: (state, action) => {
+            const {data: post} = action.payload;
+            const response = post.Response.response;
+            const result = response.result;
+            if(result){
+                return state.setIn(["continue", "modal"], false)
+                    .setIn(["continue", "title"],"")
+                    .setIn(["continue", "content"],"");
             }
         },
         onError: (state, action) => {

@@ -8,14 +8,17 @@ const INSERT = "panel/INSERT";
 const INIT = "panel/INIT";
 const MENU_TOGGLE = "panel/MENU_TOGGLE";
 
+
 export const menuToggle = createAction(MENU_TOGGLE);
 export const init = createAction(INIT, api.getPanel);
 export const toggle = createAction(TOGGLE, id => id);
 export const insert = createAction(INSERT, content => content);
 
+
 let id = 0;
 const initialState = Map({
     panel:List(),
+    cssPanel:List(),
     menuToggle:true
 });
 const reducer = handleActions({
@@ -35,6 +38,7 @@ const reducer = handleActions({
         return state.updateIn(["panel",index,"checked"], check => !check);
 
     },
+    
     [INSERT]: (state, { payload: content }) => {
         const item = Map({
             id: id++,

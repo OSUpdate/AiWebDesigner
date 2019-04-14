@@ -249,6 +249,7 @@ h1, h2, h3, h4, h5, h6{
     color:white!important;
     outline: 0!important;
     padding: 10px 15px!important;
+    margin-right: 10px;
 }
 .message{
     padding:2rem!important;
@@ -1333,7 +1334,7 @@ fieldset[disabled] .btn-xl.active {
 }
 .editor_content{
     position: relative !important;
-    flex:0 0 90% !important;
+    flex:0 0 88% !important;
     width:100% !important;
     overflow: auto !important;
     padding-bottom:50px !important;
@@ -1643,7 +1644,7 @@ fieldset[disabled] .btn-xl.active {
 .editor_menu {
     background-color: #222222 !important;
     z-index: 10010 !important;
-    flex:0 0 10% !important;
+    flex:0 0 12% !important;
     height: 100% !important;
     position: relative !important;
     overflow: hidden !important;

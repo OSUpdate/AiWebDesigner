@@ -98,24 +98,50 @@ export const getPanel = (token) => axios.post("/api/view/panel",{
 });
 
 /* 수정중인 템플릿 서버에 임시 저장 요청 */
-export const save = (token, html) => axios.post("/api/view/save",{
+export const save = (token, html, name, css) => axios.post("/api/view/save",{
     request:{
         token,
-        html
+        html,
+        name,
+        css
     }
 });
 
-export const endEdit = (token, html) => axios.post("/api/view/submit",{
+export const endEdit = (token, html, name, css) => axios.post("/api/view/submit",{
     request:{
         token,
-        html
+        html,
+        name,
+        css
+    }
+}).then((response) => {
+    const {Response:res} = response.data;
+    if(res.response.result){
+        getZip(token);
     }
 });
-
+export const deleteHtml = (token) => axios.post("/api/view/delete",{
+    request:{
+        token
+    }
+});
 /* info 페이지 관련 API */
 /* 차트를 그리기 위한 데이터 요청 */
 export const getChart = (token) => axios.post("/api/view/chart",{
     request:{
         token
     }
+});
+export const getZip = (token) => axios.get("/api/view/download",{
+    params:{
+        token
+    },
+    responseType: "blob",
+}).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data], { type:"application/zip" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "html.zip");
+    document.body.appendChild(link);
+    link.click();
 });

@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flaskext.mysql import MySQL
-
+import os
 import json
 app = Flask(__name__)
 mysql = MySQL();
@@ -11,8 +11,16 @@ app.config['MYSQL_DATABASE_USER'] = ""
 app.config['MYSQL_DATABASE_PASSWORD'] = ""
 # 연결할 디비
 app.config['MYSQL_DATABASE_DB'] = ""
-
+templates = []
+images = []
 mysql.init_app(app)
+def search(dirname):
+    filenames = os.listdir(dirname)
+    for filename in filenames:
+        if filename == ".DS_Store":
+            continue
+        templates.append(filename)
+        images.append("png/"+filename+".png")
 
 @app.route("/api/templates/<token>", methods=['POST'])
 def get(token):
@@ -72,8 +80,8 @@ def get(token):
     print(request.get_json(silent=True))
 
     #템플릿 관련 정보 파일이름형태로 전송
-    templates = ["1.html","2.html","3.html","4.html","5.html","6.html","7.html","8.html","9.html","10.html"]
-    images = ["img/src/1.jpg","img/src/2.jpg","img/src/3.jpg","img/src/4.jpg","img/src/5.jpg","img/src/6.jpg","img/src/7.jpg","img/src/8.jpg","img/src/9.jpg","img/src/10.jpg"]
+    #templates = ["1.html","2.html","3.html","4.html","5.html","6.html","7.html","8.html","9.html","10.html"]
+    #images = ["img/src/1.jpg","img/src/2.jpg","img/src/3.jpg","img/src/4.jpg","img/src/5.jpg","img/src/6.jpg","img/src/7.jpg","img/src/8.jpg","img/src/9.jpg","img/src/10.jpg"]
     data = {
         "Response":{
             "response":{
@@ -136,4 +144,5 @@ def set(token):
     json_data = json.dumps(data)
     return json_data
 if __name__ == "__main__":
+    search("/Users/HSJMac/Documents/nodejs/routes/api/Templates")
     app.run(host="0.0.0.0",port=4000, debug=True)

@@ -2,23 +2,28 @@ var express = require("express");
 var bcrypt = require("bcryptjs");
 var crypto = require("crypto");
 var emailjs = require("emailjs");
+var fs = require("fs");
 const mysql = require("mysql2/promise");
 //const conn = require("./db");
 var router = express.Router();
 const pool = mysql.createPool({
     host: "localhost",
     user: "root",
-    password: "",
-    database: ""
+    password: "tjdwls124",
+    database: "aws"
 });
 const server = emailjs.server.connect({
-    user: "",
-    password: "",
+    user: "force185@naver.com",
+    password: "tjdwls4358",
     host: "smtp.naver.com",
     port: 465,
     ssl: true
 });
-
+const newFolder = (id) =>{
+    fs.mkdir(`./user/${id}`,0755,function(err){
+        if(err) throw err;
+    })
+};
 const validId = (id) => (/^(?=.*[a-zA-Z])(?=.*\d).{6,10}$/.test(id));
 const validPassword = (password) => (/^(?=.*[a-zA-Z])((?=.*\d)|(?=.*\W)).{6,20}$/.test(password));
 const validCheck = (password, check) => password === check;
@@ -295,6 +300,7 @@ const signupDB = async (res, req) => {
                     token: token,
                     id: req.id
                 };
+                newFolder(req.body.request.id);
                 return res.json({
                     Response:{
                         token: token,

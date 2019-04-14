@@ -151,11 +151,12 @@ class SelectViewListContainer extends Component {
                     }
                 );
                 if(checkedList.size === 0){
-                    ViewActions.error("한 개 이상의 템플릿을 선택해주세요.");
+                    ViewActions.error("한 개의 템플릿을 선택해주세요.");
                     return;
                 }
                 await ViewActions.submit(userInfo.token, checkedList);
-                history.push("/editor");
+                console.log(`/editor/${userInfo.id}/${checkedList.toJS()[0].name}`);
+                history.push(`/editor/${userInfo.id}/${checkedList.toJS()[0].name}/`);
                 return;
             }
             else{
@@ -209,6 +210,21 @@ class SelectViewListContainer extends Component {
         view.className = "view-noOverflow";
         
     }
+    handleContinue = () => {
+        const {history} = this.props;
+        if(localStorage.getItem("saveInfo") && localStorage.getItem("userInfo")){
+            const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            const saveInfo = JSON.parse(localStorage.getItem("saveInfo"));
+            history.push(`/editor/${userInfo.id}/${saveInfo.folder}`);
+        }
+        
+    }
+    handleDeleteHtml = () => {
+        const {ViewActions, token, history} = this.props;
+        ViewActions.deleteHtml(token);
+        localStorage.removeItem("saveInfo");
+        history.push("/");
+    }
     componentWillUnmount(){
         const {ViewActions} = this.props;
         ViewActions.unmount();
@@ -217,9 +233,11 @@ class SelectViewListContainer extends Component {
     }
     /* 실제 화면에 렌더링 해주는 함수 */
     render(){
-        const {view, post, error, loading, logged, loginId, history, message, title, content, setTemplate, update} = this.props; 
+        const {view, post, error, loading, logged, loginId, history, message, title, content, setTemplate, update, continueMsg, continueTitle, continueContent} = this.props; 
         const {
             handleCancelCheck,
+            handleContinue,
+            handleDeleteHtml,
             handleCheck,
             handleSubmit,
             handleLogout,
@@ -294,7 +312,27 @@ class SelectViewListContainer extends Component {
                                     <button onClick={handleCloseExceed}>확인</button>
                                 </div>
                             </Modal>
-                            
+                            <Modal 
+                                isOpen={continueMsg}
+                                style={messageStyles}
+                                onRequestClose={handleDeleteHtml}
+                                contentLabel="modal"
+                                closeTimeoutMS={400}
+                            >
+                                <div className={styles.message}>
+                                    <div className={styles.message_header}>
+                                        <h3>{continueTitle}</h3>
+                                        
+                                    </div>
+                                    <div className={styles.message_content}>
+                                        <h4>{continueContent}</h4>
+                                    </div>
+                                </div>
+                                <div className={styles.option}>
+                                    <button onClick={handleContinue}>예</button>
+                                    <button onClick={handleDeleteHtml}>아니요</button>
+                                </div>
+                            </Modal>
                         </React.Fragment>
                     :
                     
@@ -341,7 +379,10 @@ export default connect(
         token: state.sign.get("token"),
         update: state.view.get("update"),
         page: state.view.get("page"),
-        end: state.view.get("end")
+        end: state.view.get("end"),
+        continueMsg: state.view.getIn(["continue","modal"]),
+        continueTitle: state.view.getIn(["continue","title"]),
+        continueContent: state.view.getIn(["continue","content"]),
 
     }),
     (dispatch) => ({

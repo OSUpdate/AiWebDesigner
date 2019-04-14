@@ -2,7 +2,7 @@ import React from "react";
 import WebEditorContainer from "../containers/WebEditorContainer";
 //import CodeEditor from "../containers/selectApp";
 
-const WebEditorPage = () => {
+const WebEditorPage = ({match}) => {
     return (
         <React.Fragment>
             <WebEditorContainer>

@@ -2,12 +2,35 @@ var express = require("express");
 var bcrypt = require("bcryptjs");
 var fs = require("fs");
 var http = require("http");
+const phantom = require("phantom");
+var ncp = require("ncp").ncp;
+var archiver = require("archiver");
 var router = express.Router();
 
 let collator = new Intl.Collator(undefined, {numeric: true, sensitivity: "base"});
 let filenames = [];
 let templates = [];
 let srcs =[];
+const htmlToPng = (path, folder) => {
+    if(!fs.existsSync(path)){
+        (async function() {
+            const instance = await phantom.create();
+            const page = await instance.createPage();
+        
+            await page.on("onResourceRequested", function(requestData) {
+                console.info("Requesting", requestData.url);
+            });
+       
+            const status = await page.open(`file://${__dirname}/Templates/${folder}/index.html`);
+            page.property("viewportSize", {width: 360, height: 270});
+            page.property("clipRect", {top: 0, left: 0, width: 810, height: 480});
+            const render = await page.render(path);
+       
+            await instance.exit();
+        })();
+    }
+};
+/*
 fs.readdirSync(__dirname + "/html/")
     .sort(collator.compare)
     .forEach(file => {
@@ -16,6 +39,17 @@ fs.readdirSync(__dirname + "/html/")
             templates.push(fs.readFileSync(__dirname + `/html/${file}`,"utf-8"));
             srcs.push("img/src/"+file.replace(/.html/g, ".jpg"));
         }
+    });
+*/
+fs.readdirSync(__dirname + "/Templates/")
+    .sort(collator.compare)
+    .forEach(folder => {
+        if(folder === ".DS_Store")
+            return;
+        filenames.push(`${folder}`);
+        templates.push(fs.readFileSync(__dirname + `/Templates/${folder}/index.html`,"utf-8"));
+        htmlToPng(`png/${folder}.png`, folder);
+        srcs.push(`png/${folder}.png`);
     });
 let count = 30;
 let maxPage = Math.ceil(filenames.length/count);
@@ -61,7 +95,7 @@ const aiTemplate = (res, templates, token, callback) => {
 
                     const htmls = json.Response.response.templates.map((item, index)=>{
                         try {
-                            return fs.readFileSync(__dirname + `/html/${item}`,"utf-8");
+                            return fs.readFileSync(`${__dirname}/Templates/${item}/index.html`,"utf-8");
                         }
                         catch(err){
                             throw err;
@@ -181,6 +215,16 @@ const aiSubmit = (res, html, token, callback) => {
 };
 
 router.post("/template", function(req, res, next) {
+    if(req.session.isSave){
+        return res.json({ 
+            Response:{
+                response:{
+                    result: true,
+                    continue: true,
+                }
+            }
+        });
+    }
     if(req.body.request.token === ""){
         return res.status(401).json({ 
             Response:{
@@ -261,9 +305,7 @@ router.post("/set", async function(req, res, next) {
     const token = req.body.request.token;
     const templates = req.body.request.templates;
     let session = req.session;
-    console.log(session.loginInfo.token === token);
     if(session.loginInfo.token === token){
-        console.log("python");
         /* 인공지능 서버에 템플릿 요청 후 받아온 데이터를 클라이언트로 전송해야함 */
         await aiTemplate(res, templates, token, ()=>{
             
@@ -310,9 +352,14 @@ router.post("/html", function(req, res, next) {
     let session = req.session;
     if(session.loginInfo.token === token){
         /* 사용자가 선택한 템플릿을 세션에 저장 */
-        
+        console.log(template);
+        console.log(`${__dirname}/Templates/${template[0].name}`);
+        ncp(`${__dirname}/Templates/${template[0].name}`, `./user/${req.session.loginInfo.id}/${template[0].name}`,function (err) {
+            if (err) {
+                return console.error(err);
+            }
+        });
         req.session.html = template;
-        console.log(req.session.html );
         return res.json({ 
             Response:{
                 response:{
@@ -346,14 +393,55 @@ router.post("/editor", function(req, res, next) {
     console.log(req.body);
     const token = req.body.request.token;
     let session = req.session;
+    const  regex = new RegExp(`http://127.0.0.1:3001/templates/${session.html[0].name}/`);
+    session.html[0].body = session.html[0].body.replace(regex, `http://127.0.0.1:3001/editor/${req.session.loginInfo.id}/${session.html[0].name}/`);
+    let css = [];
     /* 사용자가 최종적으로 선택한 템플릿을 클라이언트로 전달 */
     if(session.loginInfo.token === token && typeof session.html !== undefined){
         
+        try{
+            if(fs.existsSync(`${__dirname}/Templates/${session.html[0].name}/css`)){
+                console.log(fs.existsSync(`${__dirname}/Templates/${session.html[0].name}/css`));
+                fs.readdirSync(`${__dirname}/Templates/${session.html[0].name}/css`)
+                    .forEach(file => {
+                        if(/.css/g.test(file)){
+                            const data = fs.readFileSync(__dirname + `/Templates/${session.html[0].name}/css/${file}`,"utf-8");
+                            //const result = data.replace(/[.]{2}/g, "");
+                            const temp = {
+                                name:`${css}/file`,
+                                data:data
+                            };
+                            css.push(temp);
+                        }
+                    });
+            }
+            else{
+                fs.readdirSync(`${__dirname}/Templates/${session.html[0].name}`)
+                    .forEach(file => {
+                        console.log(file);
+                        if(/.css/g.test(file)){
+                            console.log("test");
+                            const data = fs.readFileSync(__dirname + `/Templates/${session.html[0].name}/${file}`,"utf-8");
+                            const temp = {
+                                name:file,
+                                data:data
+                            };
+                            css.push(temp);
+                            console.log(css);
+                        }
+                    });
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
         return res.json({ 
             Response:{
                 response:{
                     result: true,
-                    template:session.html[0].body
+                    template:session.html[0].body,
+                    name:session.html[0].name,
+                    css:css,
                 }
             }
         });
@@ -367,7 +455,40 @@ router.post("/editor", function(req, res, next) {
     });
     
 });
-
+/* 중간에 저장되어 있는 데이터를 삭제 */
+router.post("/delete", function(req, res, next) {
+    if(req.body.request.token === "")
+        return res.status(401).json({ 
+            Response:{
+                response:{
+                    result: false,
+                }
+            }
+        });
+    const token = req.body.request.token;
+    let session = req.session;
+    if(session.loginInfo.token === token){
+        delete req.session.isSave;
+        delete req.session.html;
+        return res.json({ 
+            Response:{
+                response:{
+                    result: true,
+                    
+                }
+            }
+        });
+        
+    }
+    return res.json({ 
+        Response:{
+            response:{
+                result: false,
+            }
+        }
+    });
+    
+});
 /* Editor 페이지 요청 시 버튼, 이미지 등 설정 작업*/
 router.post("/panel", function(req, res, next) {
     console.log(req.body.request, "panel");
@@ -418,10 +539,26 @@ router.post("/save", function(req, res, next) {
         });
     const token = req.body.request.token;
     const html = req.body.request.html;
+    const name = req.body.request.name;
     let session = req.session;
+    const cssList = req.body.request.css;
     if(session.loginInfo.token === token && typeof session.html !== undefined && typeof html !== undefined){
         /* 작업중인 html 임시 저장 */
-        req.session.html.body = html;
+        fs.writeFile(`./user/${session.loginInfo.id}/${name}/index.html`,html, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+        });
+        cssList.map((item, index)=>{
+            console.log(item.name);
+            fs.writeFile(`./user/${session.loginInfo.id}/${name}/${item.name}`,item.data, function(err){
+                if(err) {
+                    return console.log(err);
+                }
+            });
+        });
+        req.session.isSave = true;
+        req.session.html[0].body = html;
         return res.json({ 
             Response:{
                 response:{
@@ -448,13 +585,70 @@ router.post("/submit", async function(req, res, next) {
                 }
             }
         });
+    const session = req.session;
+    const regex = new RegExp(`http://127.0.0.1:3001/editor/${session.loginInfo.id}/${session.html[0].name}/`);
     const token = req.body.request.token;
-    const html = req.body.request.html;
-    let session = req.session;
+    const html = req.body.request.html.replace(regex, "");
+    const name = req.body.request.name;
+    
+    const cssList = req.body.request.css;
+
     if(session.loginInfo.token === token && typeof session.html !== undefined && typeof html !== undefined){
-        await aiSubmit(res, html, token, (html)=>{
-            // 다운로드 코드 여기 실행
+        fs.writeFileSync(`./user/${req.session.loginInfo.id}/${name}/index.html`,html, function(err) {
+            if(err) {
+                return console.log(err);
+            }
         });
+        cssList.map((item, index)=>{
+            console.log(item.name);
+            fs.writeFileSync(`./user/${session.loginInfo.id}/${name}/${item.name}`,item.data, function(err){
+                if(err) {
+                    return console.log(err);
+                }
+            });
+        });
+        let output = fs.createWriteStream(`./user/${session.loginInfo.id}/html.zip`);
+        let archive = archiver("zip", {
+            zlib: { level: 9 } // Sets the compression level.
+        });
+        output.on("close", function() {
+            console.log(archive.pointer() + " total bytes");
+            console.log("archiver has been finalized and the output file descriptor has closed.");
+        });
+           
+        // This event is fired when the data source is drained no matter what was the data source.
+        // It is not part of this library but rather from the NodeJS Stream API.
+        // @see: https://nodejs.org/api/stream.html#stream_event_end
+        output.on("end", function() {
+            console.log("Data has been drained");
+        });
+        archive.on("warning", function(err) {
+            if (err.code === "ENOENT") {
+                // log warning
+            } else {
+                // throw error
+                throw err;
+            }
+        });
+           
+        // good practice to catch this error explicitly
+        archive.on("error", function(err) {
+            throw err;
+        });
+           
+        archive.pipe(output);
+        archive.directory(`./user/${req.session.loginInfo.id}/${name}`, false);
+        await archive.finalize();
+        res.json({ 
+            Response:{
+                response:{
+                    result: true,
+                }
+            }
+        });
+        //await aiSubmit(res, html, token, (html)=>{
+        // 다운로드 코드 여기 실행
+        //});
         /* html 파일 다운로드 */
         /*
             let filename = 'myFile.ext';
@@ -532,6 +726,37 @@ router.post("/chart", function(req, res, next) {
                 }
             }
         });
+    }
+    return res.status(401).json({ 
+        Response:{
+            response:{
+                result: false,
+            }
+        }
+    });
+    
+});
+router.get("/download", function(req, res, next) {
+    if(req.query.token === "")
+        return res.status(401).json({ 
+            Response:{
+                response:{
+                    result: false,
+                }
+            }
+        });
+    const token = req.query.token;
+    let session = req.session;
+    if(req.session.isSave){
+        delete req.session.isSave;
+        delete req.session.html;
+    }
+    if(session.loginInfo.token === token){
+        /* 인공지능 서버에서 차트정보 받아와야함 */
+        res.download(`./user/${req.session.loginInfo.id}/html.zip`, "html.zip", function(err) {
+            console.log(err);
+        });
+        return res;
     }
     return res.status(401).json({ 
         Response:{

@@ -90,6 +90,11 @@ class WebEditorContainer extends Component {
         const {PanelActions} = this.props;
         PanelActions.menuToggle();
     }
+    handleCssMenuCheck = (e, id) => {
+        const {EditorActions} = this.props;
+        e.currentTarget.blur();
+        EditorActions.cssToggle(id);
+    }
     /* 코드 편집기 버튼 onClick toogle 함수 */
     handleEditorToggle = (e) => {
         const {EditorActions} = this.props;
@@ -100,6 +105,10 @@ class WebEditorContainer extends Component {
     handleCodeChange = (code) => {
         const {EditorActions} = this.props;
         EditorActions.change(code);
+    }
+    handleCssCodeChange = (code, id) => {
+        const {EditorActions} = this.props;
+        EditorActions.cssChange([code, id]);
     }
     /* 로그인되어 있지 않을 경우 실행되는 함수 */
     handleNotSignIn = () => {
@@ -117,15 +126,27 @@ class WebEditorContainer extends Component {
         history.push("/");
     }
     handleSave = () => {
-        const {EditorActions, token, editor} = this.props;
-        EditorActions.save(token, editor.get("content"));
+        const {EditorActions, token, editor, css, history} = this.props;
+        EditorActions.save(token, editor.get("content"), editor.get("name"),css);
+        
         setTimeout(()=>EditorActions.closeStatus(),3000);
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        console.log(`/editor/${userInfo.id}/${editor.get("name")}`);
+        history.push(`/editor/${userInfo.id}/${editor.get("name")}`);
 
     }
     handleSubmit = async () => {
-        const {EditorActions, token, editor} = this.props;
+        const {EditorActions, token, editor, css} = this.props;
+        localStorage.setItem(
+            "saveInfo",
+            JSON.stringify({
+                folder: editor.get("name")
+            })
+        );
         try{
-            await EditorActions.submit(token, editor.get("content"));
+            await EditorActions.submit(token, editor.get("content"), editor.get("name"), css);
+            //await EditorActions.download(token);
+            setTimeout(()=>EditorActions.closeStatus(),3000);
         }
         catch(e){
             console.log(e);
@@ -166,9 +187,10 @@ class WebEditorContainer extends Component {
                 </section>
 
             </body>`;
-        const {panel, post, error, loading, loginId, logged, menuToggle, editorToggle, editor, history, message, title, content, statusToggle, save, editLoading, panelLoading} = this.props; 
+        const {panel, post, error, loading, loginId, logged, cssToggle, menuToggle, editorToggle, editor, history, message, title, content, statusToggle, save, editLoading, panelLoading, css} = this.props; 
         const {
             handleCheck,
+            handleCssMenuCheck,
             home,
             handleMenuToggle,
             handleEditorToggle,
@@ -176,7 +198,8 @@ class WebEditorContainer extends Component {
             handleLogout,
             handleCloseNotSignIn,
             handleSave,
-            handleSubmit
+            handleSubmit,
+            handleCssCodeChange
         } = this;
         return (
 
@@ -203,7 +226,10 @@ class WebEditorContainer extends Component {
                                 save={save}
                                 onSave={handleSave}
                                 onSubmit={handleSubmit}
-
+                                css={css}
+                                onCssCheck={handleCssMenuCheck}
+                                onCssChange={handleCssCodeChange}
+                                onCssToggle={cssToggle}
                             />   
                     
                             <Modal 
@@ -276,7 +302,9 @@ export default connect(
         content: state.editor.getIn(["message","content"]),
         token: state.sign.get("token"),
         save:state.editor.getIn(["status","error"]),
-        statusToggle: state.editor.get("statusToggle")
+        statusToggle: state.editor.get("statusToggle"),
+        css:state.editor.get("css"),
+        cssToggle:state.editor.get("cssToggle")
 
     }),
     (dispatch) => ({

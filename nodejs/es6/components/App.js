@@ -15,7 +15,8 @@ const App = () => {
         <Switch>
             <Route exact path="/" component={Index}/>
             <Route exact path="/select" component={Select}/>
-            <Route exact path="/editor" component={Editor}/>
+           
+            <Route exact path="/editor/:user/:folder/" component={Editor}/>
             <Route exact path="/info" component={Info}/>
             <Route exact path="/find" component={Forgot}/>
             <Route component={NotFound}/>

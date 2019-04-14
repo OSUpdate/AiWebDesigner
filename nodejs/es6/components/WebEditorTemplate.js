@@ -10,7 +10,10 @@ import CodeEditor from "./CodeEditor";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
+
 import { faAngleLeft, faAngleRight, faCode, faCheck, faCheckSquare, faImage} from "@fortawesome/free-solid-svg-icons";
+import CssPanelList from "./CssPanelList";
+import CssList from "./CssList";
 
 class WebEditorTemplate extends Component {
     render(){
@@ -45,10 +48,19 @@ class WebEditorTemplate extends Component {
 
                                 </DropTarget>
         */
-        const {children,panel,loginId, onMenuClick, logged, onEditorClick, onLogout, onMenuToggle, onEditorToggle, onMenuCheck, editor, onCodeChange, status, save, onSave, onSubmit} = this.props;
+        const {children,panel,loginId, onMenuClick, logged, onEditorClick,onCssToggle,  onLogout, onMenuToggle, onEditorToggle, onMenuCheck, editor, onCodeChange, status, save, onSave, onSubmit, css, onCssCheck,
+            onCssChange} = this.props;
         const btn1 = panel.getIn([0,"checked"]);
         const btn2 = panel.getIn([1,"checked"]);
         const btn3 = panel.getIn([2,"checked"]);
+        let cssNames = [];
+        const cssList = css.map(
+            (item) => {
+                const { name, data } = item.toJS();
+                cssNames.push(name);
+                return data;
+            }
+        );
         const codeEditorToggle = true;
         return (
             <React.Fragment>
@@ -96,6 +108,10 @@ class WebEditorTemplate extends Component {
                                     <FontAwesomeIcon icon={faCode} style={styles.panel_icon}/><h4>편집기</h4>
                                 </a>
                             </li>
+                            <CssPanelList
+                                css={css}
+                                onClick={onCssCheck}
+                            />
                         </ul>
                         <footer className={styles.panel_footer}>
                             <button className={styles.panel_btn} onClick={onSubmit}><h4>완료</h4></button>
@@ -117,7 +133,10 @@ class WebEditorTemplate extends Component {
                            
                         </div>
                         <div className={(btn1||btn2||btn3) ? cx(styles.editor_view_frame, styles.w_85):styles.editor_view_frame}>
-                            <div className={onEditorToggle? cx(styles.editor_view, styles.h_70):styles.editor_view} >
+                            <div className={onEditorToggle || onCssToggle? cx(styles.editor_view, styles.h_70):styles.editor_view} >
+                                <style dangerouslySetInnerHTML={{ __html: cssList.join(" ")}}>
+
+                                </style>
                                 <DropTarget
                                     children={children}
                                     onChange={onCodeChange}
@@ -141,32 +160,40 @@ class WebEditorTemplate extends Component {
                                     ""
                                 }
                             </div>
-                            
-                            
-                            <div className={onEditorToggle? styles.code_header : cx(styles.code_header, styles.h_0)}>
-                                <div className={cx(styles.container, styles.bg_black)}>
-                                    <div className={styles.code_header_title}>
-                                        <p>코드 편집기</p>
+                           
+                            {onEditorToggle?
+                                <React.Fragment>
+                                    <div className={onEditorToggle? styles.code_header : cx(styles.code_header, styles.h_0)}>
+                                        <div className={cx(styles.container, styles.bg_black)}>
+                                            <div className={styles.code_header_title}>
+                                                <p>코드 편집기</p>
+                                            </div>
+                                            <div>
+                                                <ul className={styles.code_header_btn}>
+                                                    <li>
+                                                        <a onClick={(e) => onEditorClick(e)} className={styles.close_btn}>&times;</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <ul className={styles.code_header_btn}>
-                                            <li>
-                                                <a onClick={(e) => onEditorClick(e)} className={styles.close_btn}>&times;</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                            
+                                    <div className={onEditorToggle? cx(styles.container_editor_area, styles.h_30):cx(styles.container_editor_area)}>
                                 
-                            <div className={onEditorToggle? cx(styles.container_editor_area, styles.h_30):styles.container_editor_area}>
-                                
-                                <CodeEditor
-                                    code={children}
-                                    onChange={onCodeChange}
-                                >
+                                        <CodeEditor
+                                            code={children}
+                                            onChange={onCodeChange}
+                                        >
 
-                                </CodeEditor>
-                            </div>
+                                        </CodeEditor>
+                                    </div>
+                                </React.Fragment>
+                                :""}
+                            <CssList 
+                                css={css}
+                                onChange={onCssChange}
+                                onClick={onCssCheck}
+                            />
                         </div>
                     </div>
                     

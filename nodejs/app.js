@@ -22,13 +22,17 @@ app.set("view engine", "jade");
 
 app.use(logger("dev"));
 app.use(cors());
-app.use(bodyParser.json({limit: 5000000}));
-app.use(bodyParser.urlencoded({limit: 5000000, extended: true, parameterLimit:50000}));
+app.use(bodyParser.json({limit: 50000000}));
+app.use(bodyParser.urlencoded({limit: 50000000, extended: true, parameterLimit:50000}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/templates",express.static(path.join(__dirname+"/routes/api/Templates")));
+app.use("/png",express.static(path.join(__dirname+"/png")));
+app.use('/editor', function (req, res, next) {
+    return express.static(`${__dirname}/user`, { index: 'default.html' }).apply(this, arguments);
+  });
 app.use(session({
     secret: "test",
     resave: false,
