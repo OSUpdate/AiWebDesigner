@@ -13,6 +13,7 @@ const CssPanelList = ({css, onClick}) => {
                 <CssPanelItem
                     key={index}
                     id={index}
+                    index={index}
                     name={name}
                     onClick={onClick}
                     toggle={toggle}

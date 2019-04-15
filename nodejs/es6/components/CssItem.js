@@ -4,7 +4,7 @@ import cx from "classnames";
 import CssCodeEditor from "./CssCodeEditor";
 class CssItem extends Component{
     render() {
-        const {name, code, onChange, toggle, onClick, id} = this.props;
+        const {name, code, onChange, toggle, onClick, index} = this.props;
         return (
             <React.Fragment>
                 {toggle?
@@ -28,7 +28,7 @@ class CssItem extends Component{
                             <CssCodeEditor
                                 code={code}
                                 onChange={onChange}
-                                index={id}
+                                index={index}
                             />
                         </div>
                     </React.Fragment>   

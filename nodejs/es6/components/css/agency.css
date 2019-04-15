@@ -2498,6 +2498,7 @@ body {
   .container_editor_area {
     background-color: #ddd;
     width:100% !important;
+    line-height: 3em;
     max-height: 400px!important;
     overflow: auto!important;
   }

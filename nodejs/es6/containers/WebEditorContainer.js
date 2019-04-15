@@ -93,6 +93,7 @@ class WebEditorContainer extends Component {
     handleCssMenuCheck = (e, id) => {
         const {EditorActions} = this.props;
         e.currentTarget.blur();
+        console.log(e,id);
         EditorActions.cssToggle(id);
     }
     /* 코드 편집기 버튼 onClick toogle 함수 */

@@ -77,8 +77,7 @@ const reducer = handleActions({
 
     },
     [CSS_TOGGLE]:(state, {payload: id}) => {
-        const index = state.get("css").findIndex(item => item.get("id") === id);
-        return state.updateIn(["css",index,"toggle"], check => !check)
+        return state.updateIn(["css",id,"toggle"], check => !check)
             .update("cssToggle", check => !check);
 
     },

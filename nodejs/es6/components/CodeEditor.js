@@ -31,6 +31,7 @@ class CodeEditor extends Component {
                    
                     style={{
                         fontSize: 18,
+                        lineHeight: "1.1em",
 
                     }}
                 />

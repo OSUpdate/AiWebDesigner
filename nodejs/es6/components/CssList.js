@@ -10,6 +10,7 @@ const CssList = ({css, onChange, onClick}) => {
                 <CssItem
                     id={index} 
                     key={index}
+                    index={index}
                     name={name}
                     code={data}
                     toggle={toggle}
