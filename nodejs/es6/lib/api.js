@@ -120,6 +120,7 @@ export const endEdit = (token, html, name, css) => axios.post("/api/view/submit"
         getZip(token);
     }
 });
+export const testLoad = (url) => axios.get(url);
 export const deleteHtml = (token) => axios.post("/api/view/delete",{
     request:{
         token

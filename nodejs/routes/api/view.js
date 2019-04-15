@@ -393,22 +393,18 @@ router.post("/editor", function(req, res, next) {
     console.log(req.body);
     const token = req.body.request.token;
     let session = req.session;
-    const  regex = new RegExp(`http://127.0.0.1:3001/templates/${session.html[0].name}/`);
-    session.html[0].body = session.html[0].body.replace(regex, `http://127.0.0.1:3001/editor/${req.session.loginInfo.id}/${session.html[0].name}/`);
+    
     let css = [];
-    /* 사용자가 최종적으로 선택한 템플릿을 클라이언트로 전달 */
-    if(session.loginInfo.token === token && typeof session.html !== undefined){
-        
+    if(session.isSave){
         try{
-            if(fs.existsSync(`${__dirname}/Templates/${session.html[0].name}/css`)){
-                console.log(fs.existsSync(`${__dirname}/Templates/${session.html[0].name}/css`));
-                fs.readdirSync(`${__dirname}/Templates/${session.html[0].name}/css`)
+            if(fs.existsSync(`./user/${session.loginInfo.id}/${session.html[0].name}/css`)){
+                fs.readdirSync(`./user/${session.loginInfo.id}/${session.html[0].name}/css`)
                     .forEach(file => {
                         if(/.css/g.test(file)){
-                            const data = fs.readFileSync(__dirname + `/Templates/${session.html[0].name}/css/${file}`,"utf-8");
+                            const data = fs.readFileSync(`./user/${session.loginInfo.id}/${session.html[0].name}/css/${file}`,"utf-8");
                             //const result = data.replace(/[.]{2}/g, "");
                             const temp = {
-                                name:`${css}/file`,
+                                name:`css/${file}`,
                                 data:data
                             };
                             css.push(temp);
@@ -416,12 +412,11 @@ router.post("/editor", function(req, res, next) {
                     });
             }
             else{
-                fs.readdirSync(`${__dirname}/Templates/${session.html[0].name}`)
+                fs.readdirSync(`./user/${session.loginInfo.id}/${session.html[0].name}`)
                     .forEach(file => {
                         console.log(file);
                         if(/.css/g.test(file)){
-                            console.log("test");
-                            const data = fs.readFileSync(__dirname + `/Templates/${session.html[0].name}/${file}`,"utf-8");
+                            const data = fs.readFileSync( `./user/${session.loginInfo.id}/${session.html[0].name}/${file}`,"utf-8");
                             const temp = {
                                 name:file,
                                 data:data
@@ -435,6 +430,60 @@ router.post("/editor", function(req, res, next) {
         catch(err){
             console.log(err);
         }
+        return res.json({ 
+            Response:{
+                response:{
+                    result: true,
+                    template:session.html[0].body,
+                    name:session.html[0].name,
+                    css:css,
+                }
+            }
+        });
+    }
+    const  regex = new RegExp(`http://127.0.0.1:3001/templates/${session.html[0].name}/`);
+    session.html[0].body = session.html[0].body.replace(regex, `http://127.0.0.1:3001///editor/${req.session.loginInfo.id}/${session.html[0].name}/`);
+    /* 사용자가 최종적으로 선택한 템플릿을 클라이언트로 전달 */
+    if(session.loginInfo.token === token && typeof session.html !== undefined){
+        
+        try{
+            if(fs.existsSync(`${__dirname}/Templates/${session.html[0].name}/css`)){
+                fs.readdirSync(`${__dirname}/Templates/${session.html[0].name}/css`)
+                    .forEach(file => {
+                        if(/.css/g.test(file)){
+                            const data = fs.readFileSync(__dirname + `/Templates/${session.html[0].name}/css/${file}`,"utf-8");
+                            const result = data.replace(/url\([.]{2}/g, "url(.");
+                            //const result1 = result.replace(/url\(/g,`url(editor/${req.session.loginInfo.id}/${session.html[0].name}`);
+                            const temp = {
+                                name:`css/${file}`,
+                                data:result
+                            };
+                            css.push(temp);
+                        }
+                    });
+            }
+            else{
+                fs.readdirSync(`${__dirname}/Templates/${session.html[0].name}`)
+                    .forEach(file => {
+                        console.log(file);
+                        if(/.css/g.test(file)){
+                            console.log("test");
+                            const data = fs.readFileSync(__dirname + `/Templates/${session.html[0].name}/${file}`,"utf-8");
+                            //const result = data.replace(/url\(/g,`url(editor/${req.session.loginInfo.id}/${session.html[0].name}/`);
+                            const temp = {
+                                name:file,
+                                data:data
+                            };
+                            css.push(temp);
+                            console.log(css);
+                        }
+                    });
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+        console.log(css);
         return res.json({ 
             Response:{
                 response:{
@@ -544,14 +593,16 @@ router.post("/save", function(req, res, next) {
     const cssList = req.body.request.css;
     if(session.loginInfo.token === token && typeof session.html !== undefined && typeof html !== undefined){
         /* 작업중인 html 임시 저장 */
-        fs.writeFile(`./user/${session.loginInfo.id}/${name}/index.html`,html, function(err) {
+        fs.writeFileSync(`./user/${session.loginInfo.id}/${name}/index.html`,html, function(err) {
             if(err) {
                 return console.log(err);
             }
         });
         cssList.map((item, index)=>{
-            console.log(item.name);
-            fs.writeFile(`./user/${session.loginInfo.id}/${name}/${item.name}`,item.data, function(err){
+            if(/.css/g.test(item.name))
+                item.data = item.data.replace(/url\([.]{1}/g,"url(..");
+
+            fs.writeFileSync(`./user/${session.loginInfo.id}/${name}/${item.name}`,item.data, function(err){
                 if(err) {
                     return console.log(err);
                 }
@@ -586,7 +637,7 @@ router.post("/submit", async function(req, res, next) {
             }
         });
     const session = req.session;
-    const regex = new RegExp(`http://127.0.0.1:3001/editor/${session.loginInfo.id}/${session.html[0].name}/`);
+    const regex = new RegExp(`http://127.0.0.1:3001///editor/${session.loginInfo.id}/${session.html[0].name}/`);
     const token = req.body.request.token;
     const html = req.body.request.html.replace(regex, "");
     const name = req.body.request.name;
@@ -600,7 +651,9 @@ router.post("/submit", async function(req, res, next) {
             }
         });
         cssList.map((item, index)=>{
-            console.log(item.name);
+            if(/.css/g.test(item.name))
+                item.data = item.data.replace(/url\([.]{1}/g,"url(..");
+
             fs.writeFileSync(`./user/${session.loginInfo.id}/${name}/${item.name}`,item.data, function(err){
                 if(err) {
                     return console.log(err);

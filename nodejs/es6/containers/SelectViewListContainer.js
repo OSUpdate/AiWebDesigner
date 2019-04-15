@@ -213,9 +213,10 @@ class SelectViewListContainer extends Component {
     handleContinue = () => {
         const {history} = this.props;
         if(localStorage.getItem("saveInfo") && localStorage.getItem("userInfo")){
+            console.log("tt");
             const userInfo = JSON.parse(localStorage.getItem("userInfo"));
             const saveInfo = JSON.parse(localStorage.getItem("saveInfo"));
-            history.push(`/editor/${userInfo.id}/${saveInfo.folder}`);
+            history.push(`/editor/${userInfo.id}/${saveInfo.folder}/`);
         }
         
     }

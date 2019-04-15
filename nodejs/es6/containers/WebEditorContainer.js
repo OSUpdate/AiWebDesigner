@@ -12,7 +12,7 @@ import WebEditorTemplate from "../components/WebEditorTemplate";
 import cx from "classnames";
 import Loading from "../components/Loading";
 import styles from "../components/css/agency.css";
-
+import axios from "axios";
 
 const messageStyles = {
     content : {
@@ -128,9 +128,24 @@ class WebEditorContainer extends Component {
     handleSave = () => {
         const {EditorActions, token, editor, css, history} = this.props;
         EditorActions.save(token, editor.get("content"), editor.get("name"),css);
-        
-        setTimeout(()=>EditorActions.closeStatus(),3000);
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        localStorage.setItem(
+            "saveInfo",
+            JSON.stringify({
+                folder: editor.get("name")
+            })
+        );
+        //console.log(css.toJS());
+        /*
+        css.map(
+            (item) => {
+                const { name } = item.toJS();
+                console.log(`/editor/${userInfo.id}/${editor.get("name")}/${name}`);
+                axios.patch(`/editor/${userInfo.id}/${editor.get("name")}/${name}`);
+            }
+        );*/
+        setTimeout(()=>EditorActions.closeStatus(),3000);
+        
         console.log(`/editor/${userInfo.id}/${editor.get("name")}`);
         history.push(`/editor/${userInfo.id}/${editor.get("name")}`);
 
