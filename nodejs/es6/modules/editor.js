@@ -77,7 +77,13 @@ const reducer = handleActions({
 
     },
     [CSS_TOGGLE]:(state, {payload: id}) => {
-        return state.updateIn(["css",id,"toggle"], check => !check)
+        const index = state.get("css").findIndex(item => item.get("id") === id);
+        const closeIndex = state.get("css").findIndex(item => item.get("toggle") === true);
+        if(closeIndex >= 0 && closeIndex !== index){
+            return state.updateIn(["css",index,"toggle"], check => !check)
+                .updateIn(["css",closeIndex,"toggle"], check => !check);
+        }
+        return state.updateIn(["css",index,"toggle"], check => !check)
             .update("cssToggle", check => !check);
 
     },
@@ -112,6 +118,7 @@ export default applyPenders(reducer, [
             const data = response.css;
             const css = data.map((item, index) => {
                 return Map({
+                    id:index,
                     name:item.name,
                     data:item.data,
                     toggle:false
