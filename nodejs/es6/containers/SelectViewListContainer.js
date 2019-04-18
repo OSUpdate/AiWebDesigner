@@ -234,7 +234,7 @@ class SelectViewListContainer extends Component {
     }
     /* 실제 화면에 렌더링 해주는 함수 */
     render(){
-        const {view, post, error, loading, logged, loginId, history, message, title, content, setTemplate, update, continueMsg, continueTitle, continueContent} = this.props; 
+        const {view, post, error, user, loading, logged, loginId, history, message, title, content, setTemplate, update, continueMsg, continueTitle, continueContent, recommend, template} = this.props; 
         const {
             handleCancelCheck,
             handleContinue,
@@ -277,7 +277,10 @@ class SelectViewListContainer extends Component {
                                         subtitle="마음에 드는 디자인을 선택하세요"
                                     >   
                                         <SelectViewList
+                                            recommend={recommend}
                                             view={view}
+                                            user={user}
+                                            onTemplate={template}
                                             onCheck={handleCheck}
                                         />
                 
@@ -384,6 +387,8 @@ export default connect(
         continueMsg: state.view.getIn(["continue","modal"]),
         continueTitle: state.view.getIn(["continue","title"]),
         continueContent: state.view.getIn(["continue","content"]),
+        recommend: state.view.get("recommend"),
+        user:state.view.get("user")
 
     }),
     (dispatch) => ({

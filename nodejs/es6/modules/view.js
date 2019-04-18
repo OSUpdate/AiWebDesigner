@@ -40,7 +40,9 @@ export const error = createAction(ERROR);
 export const deleteHtml = createAction(DELETE_HTML, api.deleteHtml);
 
 const initialState = Map({
+    user:List(),
     view:List(),
+    recommend: List(),
     message:Map({
         title: "",
         content: "",
@@ -96,8 +98,10 @@ export default applyPenders(reducer,[
             const over = response.continue;
             const source = response.src;
             const templates = fromJS(response.templates);
+            const recommend = response.recommend;
             const filename = response.name;
             const result = response.result;
+            const user = response.user;
             if(over){
                 return state.setIn(["continue", "modal"], true)
                     .setIn(["continue", "title"],"Continue")
@@ -112,10 +116,16 @@ export default applyPenders(reducer,[
                     src:source[index]
                 });
             });
+            const recommendTemplate = recommend.map((item) => {
+                return Map(item);
+            });
+            const userTemplate = user.map((item)=>{
+                return Map(item);
+            });
             if(result){
-                return state.set("view",
-                    test
-                );
+                return state.set("view",test)
+                    .set("recommend", recommendTemplate)
+                    .set("user",userTemplate);
             }
             
         },

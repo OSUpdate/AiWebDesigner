@@ -2494,7 +2494,9 @@ body {
     padding: 10px!important;
     text-align: center!important;
   }
-  
+  .under_line{
+    border-bottom:  1px solid rgba(0, 0, 0, 0.1)
+  }
   .container_editor_area {
     background-color: #ddd;
     width:100% !important;

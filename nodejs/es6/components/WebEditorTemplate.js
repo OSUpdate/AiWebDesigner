@@ -14,6 +14,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faAngleLeft, faAngleRight, faCode, faCheck, faCheckSquare, faImage} from "@fortawesome/free-solid-svg-icons";
 import CssPanelList from "./CssPanelList";
 import CssList from "./CssList";
+import DropTargetTemplate from "./DropTargetTemplate";
 
 class WebEditorTemplate extends Component {
     render(){
@@ -53,14 +54,6 @@ class WebEditorTemplate extends Component {
         const btn1 = panel.getIn([0,"checked"]);
         const btn2 = panel.getIn([1,"checked"]);
         const btn3 = panel.getIn([2,"checked"]);
-        let cssNames = [];
-        const cssList = css.map(
-            (item) => {
-                const { name, data } = item.toJS();
-                cssNames.push(name);
-                return data;
-            }
-        );
         const codeEditorToggle = true;
         return (
             <React.Fragment>
@@ -134,15 +127,14 @@ class WebEditorTemplate extends Component {
                         </div>
                         <div className={(btn1||btn2||btn3) ? cx(styles.editor_view_frame, styles.w_85):styles.editor_view_frame}>
                             <div className={onEditorToggle || onCssToggle? cx(styles.editor_view, styles.h_70):styles.editor_view} >
-                                <style dangerouslySetInnerHTML={{ __html: cssList.join(" ")}}>
-
-                                </style>
-                                <DropTarget
+                                
+                                <DropTargetTemplate
                                     children={children}
                                     onChange={onCodeChange}
+                                    css={css}
                                 >
 
-                                </DropTarget>
+                                </DropTargetTemplate>
                                 
                                 {status?
                                     save?

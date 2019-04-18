@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flaskext.mysql import MySQL
 import os
 import json
+import random
 app = Flask(__name__)
 mysql = MySQL();
 
@@ -13,6 +14,7 @@ app.config['MYSQL_DATABASE_PASSWORD'] = ""
 app.config['MYSQL_DATABASE_DB'] = ""
 templates = []
 images = []
+
 mysql.init_app(app)
 def search(dirname):
     filenames = os.listdir(dirname)
@@ -21,6 +23,25 @@ def search(dirname):
             continue
         templates.append(filename)
         images.append("png/"+filename+".png")
+def getRecommend():
+    #인공지능 추천 템플릿을 가져옴
+    recommend = []
+    for i in range(0,9):
+        recommend.append(templates[random.randint(1,342)])
+    return recommend
+@app.route("/api/get/<token>", methods=['POST'])
+def recommend(token):
+
+    data = {
+        "Response": {
+            "response": {
+                "result": True,
+                "recommend": getRecommend()
+            }
+        }
+    }
+    json_data = json.dumps(data)
+    return json_data
 
 @app.route("/api/templates/<token>", methods=['POST'])
 def get(token):

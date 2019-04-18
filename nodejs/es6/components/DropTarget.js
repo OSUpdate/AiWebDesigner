@@ -116,6 +116,7 @@ class Target extends Component{
         let isHover = true;
         const {onDrop, onDragOver,onDragEnter,onDragLeave} = this;
         return connectDropTarget(
+            
             <div
             
                 className={styles.target + " target"}

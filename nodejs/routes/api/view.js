@@ -30,6 +30,25 @@ const htmlToPng = (path, folder) => {
         })();
     }
 };
+const userTemplate = (user) => {
+    let temp = [];
+    fs.readdirSync(`./user/${user}`)
+        .sort(collator.compare)
+        .forEach((folder,index) => {
+            if(folder === ".DS_Store")
+                return;
+            if(!fs.lstatSync(`./user/${user}/${folder}`).isDirectory())
+                return;
+            temp.push({
+                id: index,
+                checked: false,
+                name:filenames[parseInt(folder)-1],
+                body: templates[parseInt(folder)-1],
+                src:srcs[parseInt(folder)-1]
+            });
+        });
+    return temp;
+};
 /*
 fs.readdirSync(__dirname + "/html/")
     .sort(collator.compare)
@@ -55,7 +74,95 @@ let count = 30;
 let maxPage = Math.ceil(filenames.length/count);
 
 
+const getTemplate = (res, name, select, token, callback) => {
 
+    const body = JSON.stringify({
+        request:{
+            token: token,
+            select: select
+        }
+    });
+    const options = {
+        host: "127.0.0.1",
+        path: `/api/get/${token}`,
+        method: "POST",
+        port:"4000",
+        headers:{
+            "Content-Type": "application/json",
+            "Content-Length": body.length
+        }
+    };
+    const req = http.request(options,function(aiRes) {
+        /*
+        console.log("STATUS: " + aiRes.statusCode);
+        console.log("HEADERS: " + JSON.stringify(aiRes.headers));
+        */
+        // Buffer the body entirely for processing as a whole.
+        var body = "";
+        aiRes.on("data", function(chunk) {
+            // You can process streamed parts here...
+            body += chunk;
+        }).on("end", function() {
+            try{
+                var json = JSON.parse(body);
+                console.log(json);
+                if(json.Response.response.result){
+                    //  json.Response.response.templates 에서 파일명 추출 후 각각 파일 오픈 후 내용을 사용자에게 전송
+                    const user = userTemplate(name);
+                    const recommend = json.Response.response.recommend.map((item, index) => {
+                        return {
+                            id: index,
+                            checked: false,
+                            name:filenames[parseInt(item)-1],
+                            body: templates[parseInt(item)-1],
+                            src:srcs[parseInt(item)-1],
+                        };
+                    });
+                    const filename = filenames.slice(0,30);
+                    const src = srcs.slice(0,30);
+                    const template = templates.slice(0,30);
+                    res.json({ 
+                        Response:{
+                            response:{
+                                result: true,
+                                templates:template,
+                                name: filename,
+                                recommend:recommend,
+                                src:src,
+                                user:user
+                            }
+                        }
+                    });
+                }
+                else{
+                    res.status(401).json({ 
+                        Response:{
+                            response:{
+                                result: false
+                            }
+                        }
+                    });
+                }
+            }
+            catch(err){
+                if(err.code === "ENOENT"){
+                    console.log("파일이 존재하지않습니다.");
+                    
+                }
+                res.status(401).json({ 
+                    Response:{
+                        response:{
+                            result: false
+                        }
+                    }
+                });
+            }
+            // ...and/or process the entire body here.
+        });
+    });
+    req.write(body);
+    req.end();
+};
 
 const aiTemplate = (res, templates, token, callback) => {
     const name = templates.map((item, index)=>{
@@ -92,24 +199,25 @@ const aiTemplate = (res, templates, token, callback) => {
                 var json = JSON.parse(body);
                 if(json.Response.response.result){
                     //  json.Response.response.templates 에서 파일명 추출 후 각각 파일 오픈 후 내용을 사용자에게 전송
-
+                    let name = [];
                     const htmls = json.Response.response.templates.map((item, index)=>{
                         try {
+                            name.push(item);
                             return fs.readFileSync(`${__dirname}/Templates/${item}/index.html`,"utf-8");
                         }
                         catch(err){
                             throw err;
                         }
                     });
-                    const name = json.Response.response.templates.map((item, index)=>{
-                        return item;
-                    });
+                    const recommend = json.Response.response.recommend;
+                    console.log(recommend);
                     res.json({ 
                         Response:{
                             response:{
                                 result: true,
                                 templates:htmls,
                                 name: name,
+                                recommend:recommend,
                                 src:json.Response.response.images
                             }
                         }
@@ -215,6 +323,8 @@ const aiSubmit = (res, html, token, callback) => {
 };
 
 router.post("/template", function(req, res, next) {
+    const token = req.body.request.token;
+    console.log(token);
     if(req.session.isSave){
         return res.json({ 
             Response:{
@@ -225,7 +335,7 @@ router.post("/template", function(req, res, next) {
             }
         });
     }
-    if(req.body.request.token === ""){
+    if(token === ""){
         return res.status(401).json({ 
             Response:{
                 response:{
@@ -234,20 +344,9 @@ router.post("/template", function(req, res, next) {
             }
         });
     }
-    let filename = filenames.slice(0,30);
-    let src = srcs.slice(0,30);
-    let template = templates.slice(0,30);
+    getTemplate(res,req.session.loginInfo.id,null,token);
     req.session.page = 0;
-    return res.json({ 
-        Response:{
-            response:{
-                result: true,
-                name: filename,
-                templates:template,
-                src:src
-            }
-        }
-    }); 
+    return res; 
 });
 router.post("/update", function(req, res, next) {
     if(req.body.request.token === "")

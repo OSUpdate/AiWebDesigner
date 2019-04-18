@@ -20,7 +20,6 @@ class CssCodeEditor extends Component {
         const{
             editorDidMount
         } = this;
-        console.log(index,"editor");
         return (
             <React.Fragment>
                 <Editor
