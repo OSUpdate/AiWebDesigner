@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import Modal from "react-modal";
 import styles from "./css/agency.css";
 import cx from "classnames";
+import {withRouter} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faCheck} from "@fortawesome/free-solid-svg-icons";
 
@@ -33,8 +34,12 @@ class SelectViewItem extends Component {
     }
     openModal = (e) => {
         //signupStyles.content.opacity = "1";
+        const { history, name} = this.props;
+        history.push(`/select/${name}/`);
         e.stopPropagation();
+        
         this.setState({modalIsOpen: true});
+        
         /*
         $(document).ready(function(){
             $(".capture").find("*").each((index,item) => {
@@ -59,7 +64,10 @@ class SelectViewItem extends Component {
     }
     
     closeModal = () => {
+        const { history } = this.props;
+        
         this.setState({modalIsOpen: false});
+        history.push("/select");
     }
     mouseEnter = () => {
         this.setState({mouseOver: true});
@@ -91,7 +99,7 @@ class SelectViewItem extends Component {
     }
     render(){
         
-        const {id,src, body, checked, onCheck} = this.props;
+        const {id,src, body, checked, onCheck, name} = this.props;
         const { modalIsOpen, load} = this.state;
         const {
             openModal,
@@ -148,4 +156,4 @@ SelectViewItem.defaultProps = {
     //onSignup: () => console.warn("onSignup not defined")
 };
 */
-export default SelectViewItem;
+export default withRouter(SelectViewItem);

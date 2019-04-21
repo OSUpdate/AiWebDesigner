@@ -6,6 +6,8 @@ import { pender, applyPenders} from "redux-pender";
 const INIT = "view/INIT";
 
 const TOGGLE = "view/TOGGLE";
+const RECOMMEND_TOGGLE = "view/RECOMMEND_TOGGLE";
+const USER_TOGGLE = "view/USER_TOGGLE";
 const INSERT = "view/INSERT";
 const CLOSE_MESSAGE = "view/CLOSE_MESSAGE";
 const CANCEL_CHECKED = "view/CANCEL_CHECKED";
@@ -24,6 +26,8 @@ const DELETE_HTML = "view/DELETE_HTML";
 export const init = createAction(INIT, api.getView);
 
 export const toggle = createAction(TOGGLE, id => id);
+export const userToggle = createAction(USER_TOGGLE, id => id);
+export const recommendToggle = createAction(RECOMMEND_TOGGLE, id => id);
 export const insert = createAction(INSERT, src => src);
 export const closeMessage = createAction(CLOSE_MESSAGE);
 
@@ -84,6 +88,14 @@ const reducer = handleActions({
     [TOGGLE]: (state, {payload: id}) => {
         const index = state.get("view").findIndex(item => item.get("id") === id);
         return state.updateIn(["view",index,"checked"], check => !check);
+    },
+    [RECOMMEND_TOGGLE]: (state, {payload: id}) => {
+        const index = state.get("recommend").findIndex(item => item.get("id") === id);
+        return state.updateIn(["recommend",index,"checked"], check => !check);
+    },
+    [USER_TOGGLE]: (state, {payload: id}) => {
+        const index = state.get("user").findIndex(item => item.get("id") === id);
+        return state.updateIn(["user",index,"checked"], check => !check);
     },
     [CLOSE_MESSAGE]: (state, action) => {
         return state.setIn(["message", "modal"], false);

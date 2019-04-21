@@ -52,6 +52,10 @@ module.exports = {
                 target: "http://localhost:3000",
                 changeOrigin : true
             },
+            "/select/" :{
+                target: "http://localhost:3000",
+                changeOrigin : true
+            },
         }
     },
     resolve: {
@@ -103,7 +107,9 @@ module.exports = {
                         options: {
                             importLoaders: 1,
                             modules: true,
-                            localIdentName: "[path][name]__[local]--[hash:base64:5]"
+                            localIdentName: "[path][name]__[local]--[hash:base64:5]",
+                            
+                            
                         },
                     },
                     {
@@ -133,7 +139,9 @@ module.exports = {
                     loader: "file-loader",
                     options: {
                         name: "[name].[ext]",
-                        outputPath: "fonts/"
+                        outputPath: "fonts/",
+                        //publicPath: "../",
+                        //useRelativePaths: true
                     }
                 }]
             },

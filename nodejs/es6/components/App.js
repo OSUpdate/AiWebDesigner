@@ -14,8 +14,8 @@ const App = () => {
     return (
         <Switch>
             <Route exact path="/" component={Index}/>
+            <Route exact path="/select/:folder" component={Select}/>
             <Route exact path="/select" component={Select}/>
-           
             <Route exact path="/editor/:user/:folder/" component={Editor}/>
             <Route exact path="/info" component={Info}/>
             <Route exact path="/find" component={Forgot}/>

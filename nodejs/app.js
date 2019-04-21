@@ -29,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/templates",express.static(path.join(__dirname+"/routes/api/Templates")));
+app.use("/select",express.static(path.join(__dirname+"/routes/api/Templates")));
+app.use("/select/png",express.static(path.join(__dirname+"/png")));
 app.use("/png",express.static(path.join(__dirname+"/png")));
 app.use("/editor", function (req, res, next) {
     return express.static(`${__dirname}/user`, { index: "default.html" }).apply(this, arguments);

@@ -4,7 +4,7 @@ import styles from "./css/agency.css";
 import { List, Map } from "immutable";
 import cx from "classnames";
 
-const SelectViewList = ({view, onCheck, recommend, user, onTemplate}) => {
+const SelectViewList = ({view, onCheck, recommend, user, onTemplate, onUserCheck, onRecommendCheck}) => {
     const titleStyle = {
         margin:"10px 15px 24px 15px",
         fontSize:"20px",
@@ -15,30 +15,32 @@ const SelectViewList = ({view, onCheck, recommend, user, onTemplate}) => {
     if(!onTemplate) {
         recommendList = recommend.map(
             (item) => {
-                const { id, checked, src, body } = item.toJS();
+                const { id, checked, src, body, name } = item.toJS();
                 return(
                     <SelectView
                         key={id}
                         id={id}
                         checked={checked}
                         src={src}
+                        name={name}
                         body={body}
-                        onCheck={onCheck}
+                        onCheck={onRecommendCheck}
                     />
                 );
             }
         );
         userList = user.map(
             (item) => {
-                const { id, checked, src, body } = item.toJS();
+                const { id, checked, src, body, name } = item.toJS();
                 return(
                     <SelectView
                         key={id}
                         id={id}
                         checked={checked}
+                        name={name}
                         src={src}
                         body={body}
-                        onCheck={onCheck}
+                        onCheck={onUserCheck}
                     />
                 );
             }
@@ -46,12 +48,13 @@ const SelectViewList = ({view, onCheck, recommend, user, onTemplate}) => {
     }
     const viewList = view.map(
         (item) => {
-            const { id, checked, src, body } = item.toJS();
+            const { id, checked, src, body, name } = item.toJS();
             return(
                 <SelectView
                     key={id}
                     id={id}
                     checked={checked}
+                    name={name}
                     src={src}
                     body={body}
                     onCheck={onCheck}

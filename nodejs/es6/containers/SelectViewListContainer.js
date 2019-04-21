@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import { connect } from "react-redux";
 import {bindActionCreators} from "redux";
 import {withRouter} from "react-router-dom";
+import { List, Map, fromJS} from "immutable";
 import * as viewActions from "../modules/view";
 import * as postActions from "../modules/post";
 import * as signActions from "../modules/sign";
@@ -79,7 +80,7 @@ class SelectViewListContainer extends Component {
     /* 템플릿 선택 onClick 함수 */
     handleCheck = (e, id) => {
         e.preventDefault();
-        const {ViewActions, template, view} = this.props;
+        const {ViewActions, template, view,history} = this.props;
         if(template){
             const checkedList = view.filter(
                 (item)=>{
@@ -100,6 +101,52 @@ class SelectViewListContainer extends Component {
         else
             ViewActions.toggle(id);
     }
+    handleRecommendCheck = (e, id) => {
+        e.preventDefault();
+        const {ViewActions, template, recommend} = this.props;
+        if(template){
+            const checkedList = recommend.filter(
+                (item)=>{
+                    return item.get("checked") === true;
+                }
+            );
+            if(checkedList.getIn([0,"id"]) === id && checkedList.size >= 1){
+                ViewActions.recommendToggle(id);
+                return;
+            }
+            if(checkedList.size >= 1){
+                ViewActions.error("한 개의 템플릿만 선택할 수 있습니다.");
+                return;
+            }
+            ViewActions.recommendToggle(id);
+            return;
+        }
+        else
+            ViewActions.recommendToggle(id);
+    }
+    handleUserCheck = (e, id) => {
+        e.preventDefault();
+        const {ViewActions, template, user} = this.props;
+        if(template){
+            const checkedList = user.filter(
+                (item)=>{
+                    return item.get("checked") === true;
+                }
+            );
+            if(checkedList.getIn([0,"id"]) === id && checkedList.size >= 1){
+                ViewActions.userToggle(id);
+                return;
+            }
+            if(checkedList.size >= 1){
+                ViewActions.error("한 개의 템플릿만 선택할 수 있습니다.");
+                return;
+            }
+            ViewActions.userToggle(id);
+            return;
+        }
+        else
+            ViewActions.userToggle(id);
+    }
     handleUpdateTemplate = async () => {
         const {ViewActions, page, end} = this.props;
         console.log("1");
@@ -115,6 +162,9 @@ class SelectViewListContainer extends Component {
         },2000);
     
     }
+    handleCheckedList = (max, array1, array2, array3) => {
+
+    } 
     handleScroll = () => {
         const{end} = this.props;
         let scrollTop = this.scroll.scrollTop;
@@ -127,7 +177,7 @@ class SelectViewListContainer extends Component {
     }
     /* 완료 버튼 onClick 함수 */
     handleSubmit = async () => {
-        const {view, history, ViewActions, template, SignActions, token} = this.props; 
+        const {view, history, ViewActions, template, SignActions, token, recommend, user} = this.props; 
         try{
             await SignActions.checkLogin();
         }
@@ -136,13 +186,9 @@ class SelectViewListContainer extends Component {
             
         }
         //console.log(checkList[0]);
-        const views = view.toJS();
+        
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-        const checkedList = view.filter(
-            (item)=>{
-                return item.get("checked") === true;
-            }
-        );
+        
         try{
             if(template){
                 const checkedList = view.filter(
@@ -150,7 +196,7 @@ class SelectViewListContainer extends Component {
                         return item.get("checked") === true;
                     }
                 );
-                if(checkedList.size === 0){
+                if(checkedList.size === 0 ){
                     ViewActions.error("한 개의 템플릿을 선택해주세요.");
                     return;
                 }
@@ -160,11 +206,35 @@ class SelectViewListContainer extends Component {
                 return;
             }
             else{
-                if(checkedList.size === 0){
+                const userCheckList = user.filter(
+                    (item)=>{
+                        return item.get("checked") === true;
+                    }
+                );
+                const recommendCheckList = recommend.filter(
+                    (item)=>{
+                        return item.get("checked") === true;
+                    }
+                );
+                const checkedList = view.filter(
+                    (item)=>{
+                        return item.get("checked") === true;
+                    }
+                );
+                const resultList = fromJS(checkedList
+                    .concat(userCheckList,recommendCheckList)
+                    .toJS()
+                    .reduce((acc, data) => {
+                        const found = acc.find((a)=>a.name ===data.name);
+                        if(!found)
+                            acc.push(data);
+                        return acc;
+                    },[]));
+                if(resultList.size === 0 ){
                     ViewActions.error("한 개 이상의 템플릿을 선택해주세요.");
                     return;
                 }
-                await ViewActions.setTemplates(userInfo.token, checkedList);
+                await ViewActions.setTemplates(userInfo.token, resultList);
                 return;
             }
         }
@@ -243,6 +313,8 @@ class SelectViewListContainer extends Component {
             handleSubmit,
             handleLogout,
             handleCloseMessage,
+            handleUserCheck,
+            handleRecommendCheck,
             handleCloseNotSignIn,
             handleNotSignIn,
             handleCloseExceed,
@@ -282,6 +354,8 @@ class SelectViewListContainer extends Component {
                                             user={user}
                                             onTemplate={template}
                                             onCheck={handleCheck}
+                                            onUserCheck={handleUserCheck}
+                                            onRecommendCheck={handleRecommendCheck}
                                         />
                 
                                     </ViewTemplate>
