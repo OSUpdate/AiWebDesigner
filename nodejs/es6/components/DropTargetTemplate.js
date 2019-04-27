@@ -6,6 +6,7 @@ import { List, Map } from "immutable";
 import CssPanelItem from "./CssPanelItem";
 import DropTarget from "./DropTarget";
 
+/* 편집 데이터 UI 컴포넌트 */
 const DropTargetTemplate = ({css, children, onChange}) => {
     let cssNames = [];
     const cssList = css.map(

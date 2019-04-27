@@ -3,20 +3,39 @@ import { handleActions, createAction} from "redux-actions";
 import * as api from "../lib/api";
 import { pender, applyPenders} from "redux-pender";
 
+// 아이디 찾기 화면 설정
 const ISFINDID = "forgot/ISFINDID";
+// 비밀번호 찾기 화면 설정
 const ISFINDPW = "forgot/ISFINDPW";
 
+// 비밀번호 변경 모달 open
 const CHANGE_OPEN_MODAL = "forgot/CHANGE_OPEN_MODAL";
+
+// 비밀번호 변경 모달 close
 const CHANGE_CLOSE_MODAL = "forgot/CHANGE_CLOSE_MODAL";
+
+// 메시지 모달 close
 const CLOSE_MESSAGE = "forgot/CLOSE_MESSAGE";
+
+// 이메일 인증 모달 open
 const CERTIFIED_OPEN_MODAL = "forgot/CERTIFIED_OPEN_MODAL";
+
+// 이메일 인증 모달 close
 const CERTIFIED_CLOSE_MODAL = "forgot/CERTIFIED_CLOSE_MODAL";
 
+// 아이디 찾기 요청
 const FIND_ID = "forgot/FIND_ID";
+
+// 비밀번호 찾기 요청
 const FIND_PASSWORD = "forgot/FIND_PASSWORD";
+
+// 비밀번호 변경 요청
 const CHANGE_USER = "forgot/CHANGE_USER";
+
+// 이메일 인증 요청
 const CERTIFIED_USER = "forgot/CERTIFIED_USER";
 
+// input 태그 onchange 이벤트  
 const INPUT_ID_EMAIL = "forgot/INPUT_ID_EMAIL";
 const INPUT_PW_EMAIL = "forgot/INPUT_PW_EMAIL";
 const INPUT_PW_ID = "forgot/INPUT_PW_ID";
@@ -25,23 +44,44 @@ const INPUT_CERTIFIED = "forgot/INPUT_CERTIFIED";
 const INPUT_PASSWORD = "forgot/INPUT_PASSWORD";
 const INPUT_PASSWORD_CHECK = "forgot/INPUT_PASSWORD_CHECK";
 
+// input 태그 onkeyup 이벤트
 const CHANGE_PASSWORD = "forgot/CHANGE_PASSWORD";
 const CHANGE_PASSWORD_CHECK = "forgot/CHANGE_PASSWORD_CHECK";
 
+// 아이디 찾기 화면 설정 함수
 export const isFindId = createAction(ISFINDID);
+
+// 비밀번호 찾기 화면 설정 함수
 export const isFindPw = createAction(ISFINDPW);
 
+// 이메일 인증 모달 open 함수
 export const certifiedOpenModal = createAction(CERTIFIED_OPEN_MODAL);
+
+// 이메일 인증 모달 close 함수
 export const certifiedCloseModal = createAction(CERTIFIED_CLOSE_MODAL);
+
+// 비밀번호 변경 모달 close 함수
 export const changeCloseModal = createAction(CHANGE_CLOSE_MODAL);
+
+// 비밀번호 변경 모달 open 함수
 export const changeOpenModal = createAction(CHANGE_OPEN_MODAL);
+
+// 메시지 모달 close 함수
 export const closeMessage = createAction(CLOSE_MESSAGE);
 
+// 아이디 찾기 요청 함수
 export const findId = createAction(FIND_ID, api.findId);
+
+// 비밀번호 찾기 요청 함수
 export const findPassword = createAction(FIND_PASSWORD, api.findPw);
+
+// 비밀번호 변경 요청 함수
 export const changeUser = createAction(CHANGE_USER, api.change);
+
+// 이메일 인증 요청 함수
 export const certifiedUser = createAction(CERTIFIED_USER, api.certified);
 
+// input 태그 onchange 이벤트 함수
 export const inputIdEmail = createAction(INPUT_ID_EMAIL);
 export const inputPwEmail = createAction(INPUT_PW_EMAIL);
 export const inputPwId = createAction(INPUT_PW_ID);
@@ -50,16 +90,20 @@ export const inputCertified = createAction(INPUT_CERTIFIED);
 export const inputPassword = createAction(INPUT_PASSWORD);
 export const inputPwCheck = createAction(INPUT_PASSWORD_CHECK);
 
+// input 태그 onkeyup 이벤트 함수
 export const changePassword= createAction(CHANGE_PASSWORD);
 export const changePwCheck = createAction(CHANGE_PASSWORD_CHECK);
 
+// 상태 관리에 필요한 변수들 정의
 const initialState = Map({
+    // 아이디 찾기 input 태그 데이터
     findId:Map({
         id:"email",
         type: "email",
         title:"이메일",
         value:""
     }),
+    // 비밀번호 찾기 input 태그 데이터
     findPw:List([
         Map({
             id:"id",
@@ -74,6 +118,7 @@ const initialState = Map({
             value:""
         })
     ]),
+    // 비밀번호 변경 input 태그 데이터
     change:List([
         Map({
             id:"password",
@@ -92,11 +137,13 @@ const initialState = Map({
             check:false
         })
     ]),
+    // 성공, 에러 메시지 데이터
     message:Map({
         title: "",
         content: "",
         modal: false
     }),
+    // 이메일 인증 input 태그 데이터
     certified:Map({
         value:"",
         text:""

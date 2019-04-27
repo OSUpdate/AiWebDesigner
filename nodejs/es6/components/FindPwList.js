@@ -5,6 +5,7 @@ import ChangePwTemplate from "./ChangePwTemplate";
 import CertifiedTemplate from "./CertifiedTemplate";
 import { List, Map } from "immutable";
 
+/* 비밀번호 찾기 컴포넌트 리스트 */
 const FindPwList = ({certified, onCertifiedUser, findPw, onChange, onCertified, changeIsOpen, certifiedIsOpen, changePw, changOpenModal, changeCloseModal, certifiedOpenModel, certifiedCloseModal, onPwInput, onPwChange, onChangeUser, onFindPw}) => {
     const FindPwList = findPw.map(
         (item, index) => {
@@ -66,6 +67,7 @@ const FindPwList = ({certified, onCertifiedUser, findPw, onChange, onCertified, 
     );
 
 };
+/* 비밀번호 찾기 컴포넌트 리스트 디폴트 값 */
 FindPwList.defaultProps = {
     findId:List([
         Map({

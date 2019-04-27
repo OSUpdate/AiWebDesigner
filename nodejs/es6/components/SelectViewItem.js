@@ -6,8 +6,7 @@ import {withRouter} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faCheck} from "@fortawesome/free-solid-svg-icons";
 
-
-
+// html 모달 스타일
 const viewStyles = {
     content : {
         top                   : "50%",
@@ -27,76 +26,45 @@ const viewStyles = {
     }
 };
 Modal.setAppElement("#root");
+/* 템플릿 (이미지, html 모달) 데이터 컴포넌트 */
 class SelectViewItem extends Component { 
+    // 상태 변수 선언
     state = {
         modalIsOpen: false,
         load: false
     }
+    // html 모달 open 함수
     openModal = (e) => {
-        //signupStyles.content.opacity = "1";
         const { history, name} = this.props;
+        // 해당 페이지에서 이미지, css 데이터를 받아옴
         history.push(`/select/${name}/`);
         e.stopPropagation();
-        
+        // 모달 open
         this.setState({modalIsOpen: true});
-        
-        /*
-        $(document).ready(function(){
-            $(".capture").find("*").each((index,item) => {
-                let temp = item.className;
-                $(item).removeClass(temp).addClass("capture").addClass(temp);
-                temp = null;
-                //item.className = "capture " + item.className; 
-            
-            });
-        });
-        */
-        /*
-        $(document).ready(function(){
-            $(".capture").find("*").prop("class", "capture");
-        });
-        */
     }
-    
+    /* html 모달 close 후 처리 함수 */
     afterOpenModal = () => {
-        // references are now sync'd and can be accessed.
-        //this.subtitle.style.color = "#f00";
     }
-    
+    /* html 모달 close 함수 */
     closeModal = () => {
         const { history } = this.props;
-        
+        // 모달 close
         this.setState({modalIsOpen: false});
+        // 읽어들인 css, image 데이터 삭제
         history.push("/select");
     }
+    /* 마우스 over 이벤트 함수 */
     mouseEnter = () => {
         this.setState({mouseOver: true});
     }
+    /* 템플릿 onClick 함수 */
     itemCheck = () => {
         const {onCheck} = this.props;
+        // 해당 템플릿 선택 함수 호출
         onCheck();
         this.setState({checked : !this.state.checked});
     }
-    componentDidMount() {
-        
-        /*
-        $("#capture").addClass("testt");
-        $("#capture").find("*").addClass("capture");
-        
-        let iframe=document.createElement("iframe");
-        document.body.appendChild(iframe);
-        var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
-        iframedoc.body.innerHTML=html;
-        html2canvas(iframedoc.body, {
-            onrendered: function(canvas) {
-                document.body.appendChild(canvas);
-                document.body.removeChild(iframe);
-                const imgData = canvas.toDataURL("image/png");
-                document.getElementById("test").src = imgData;
-            }
-        });
-        */
-    }
+
     render(){
         
         const {id,src, body, checked, onCheck, name} = this.props;

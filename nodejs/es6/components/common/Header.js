@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styles from "../css/agency.css";
 import cx from "classnames";
+
+/* Herder UI 컴포넌트 */
 const Header = ({loginId, logged, onLogout}) => {
     return (
         <nav id="mainNav" className={cx(styles.navbar, styles.navbar_default, styles.navbar_custom, styles.navbar_absolute, styles.navbar_editor)}>

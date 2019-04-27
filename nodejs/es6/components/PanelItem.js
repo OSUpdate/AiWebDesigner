@@ -3,6 +3,8 @@ import styles from "./css/agency.css";
 import DragSource from "./DragSource";
 import Parser from "html-react-parser";
 import cx from "classnames";
+
+/* 패널 (버튼, 이미지 패널) 데이터 컴포넌트 */
 class PanelItem extends Component{
     /*
     <Sortable
@@ -41,6 +43,7 @@ class PanelItem extends Component{
         let id = 0;
         
         const {header,content, checked} = this.props;
+        // 패널에 DragSource 컴포넌트 리스트 생성
         const items = content.map(
             (item,index) =>{
                 return(

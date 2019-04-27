@@ -7,7 +7,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-markup";
 import styles from "./css/agency.css";
 require("prismjs/components/prism-jsx");
-
+/* Html 코드 편집기 컴포넌트 */
 class CodeEditor extends Component {
     editorDidMount = (editor, monaco) => {
         editor.focus();

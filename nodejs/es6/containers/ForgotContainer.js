@@ -9,7 +9,7 @@ import Modal from "react-modal";
 import Loading from "../components/Loading";
 import styles from "../components/css/agency.css";
 
-
+// 모달 창 스타일 설정
 const messageStyles = {
     content : {
         top                   : "50%",
@@ -35,7 +35,9 @@ class ForgotContainer extends Component {
     /* 컴포넌트 로드 후 로그인 되어있을 경우 홈 화면으로 이동 */
     componentDidMount(){
         const {history} = this.props;
+        // 로그인이 되어있지 않으면 메인 페이지로 이동
         if(localStorage.getItem("userInfo")){
+            // 메인 페이지로 이동
             history.push("/");
             return;
         }
@@ -43,26 +45,33 @@ class ForgotContainer extends Component {
     /* 아이디 찾기 버튼 onClick 함수 */
     handleForgotIsFindId = () => {
         const {ForgotActions} = this.props;
+        // 아이디 찾기 화면으로 변경
         ForgotActions.isFindId();
     }
     /* 비밀번호 찾기 버튼 onClick 함수 */
     handleForgotIsFindPw = () => {
         const {ForgotActions} = this.props;
+        // 비밀번호 찾기 화면으로 변경
         ForgotActions.isFindPw();
     }
     /* 아이디 찾기 이메일 입력 onChange 함수 */
     handleFindIdInput = (e) => {
         const {ForgotActions} = this.props;
+        // input 태그 value 변경 함수 호출
         ForgotActions.inputIdEmail(e.target.value);
     }
     /* 비밀번호 찾기 입력 onChange 함수 */
     handleFindPwInput = (e) => {
         const {ForgotActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 id인 경우
         case "id":
+            // input 태그 value 변경 함수 호출
             ForgotActions.inputPwId(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 email인 경우
         case "email":
+            // input 태그 value 변경 함수 호출
             ForgotActions.inputPwEmail(e.target.value);
             break;
         }
@@ -70,6 +79,7 @@ class ForgotContainer extends Component {
     /* 비밀번호 변경 인증코드 onChange 함수 */
     handleCertifiedInput = (e) => {
         const {ForgotActions} = this.props;
+        // input 태그 value 변경 함수 호출
         ForgotActions.inputCertified(e.target.value);
 
     }
@@ -77,10 +87,14 @@ class ForgotContainer extends Component {
     handlePwInput = (e) => {
         const {ForgotActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 password인 경우
         case "password":
+            // input 태그 value 변경 함수 호출
             ForgotActions.inputPassword(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 check인 경우
         case "check":
+            // input 태그 value 변경 함수 호출
             ForgotActions.inputPwCheck(e.target.value);
             break;
         }
@@ -89,10 +103,14 @@ class ForgotContainer extends Component {
     handlePwChange = (e) => {
         const {ForgotActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 password인 경우
         case "password":
+            // input 태그 value 변경 함수 호출
             ForgotActions.changePassword(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 check인 경우
         case "check":
+            // input 태그 value 변경 함수 호출
             ForgotActions.changePwCheck(e.target.value);
             break;
         }
@@ -101,6 +119,7 @@ class ForgotContainer extends Component {
     handleFindId = async () => {
         const {ForgotActions, findId} = this.props;
         try{
+            // 서버에 아이디 찾기 요청
             await ForgotActions.findId(findId.getIn(["value"]));
         }
         catch(e){
@@ -111,6 +130,7 @@ class ForgotContainer extends Component {
     handleFindPw = async () => {
         const {ForgotActions, findPw} = this.props;
         try{
+            // 서버에 비밀번호 찾기 요청
             await ForgotActions.findPassword(findPw.getIn([0,"value"]), findPw.getIn([1,"value"]));
         }
         catch(e){
@@ -120,34 +140,44 @@ class ForgotContainer extends Component {
     /* 비밀번호가 존재할 경우 변경 모달 open 함수 */
     handleChangeOpenModal = () => {
         const {ForgotActions} = this.props;
+        // 비밀번호 변경 모달 open
         ForgotActions.changeOpenModal();
     }
     /* 비밀번호가 존재할 경우 변경 모달 close 함수 */
     handleChangeCloseModal = () => {
         const {ForgotActions} = this.props;
+        // 비밀번호 변경 모달 close
         ForgotActions.changeCloseModal();
     }
+    /* 이메일 인증 모달 open 함수 */
     handleCertifiedOpenModal = () => {
         const {ForgotActions} = this.props;
+        // 이메일 인증 모달 open
         ForgotActions.certifiedOpenModal();
     }
+    /* 이메일 인증 모달 close 함수 */
     handleCertifiedCloseModal = () => {
         const {ForgotActions} = this.props;
+        // 이메일 인증 모달 close
         ForgotActions.certifiedCloseModal();
     }
     /* 성공, 실패시 메시지 모달 close 함수 */
     handleCloseMessage = () => {
         const {ForgotActions} = this.props;
+        // 메시지 모달 close
         ForgotActions.closeMessage();
     }
+    /* 이메일 인증 요청 함수 */
     handleCertifiedUser = async () => {
         const {ForgotActions, certified, token} = this.props;
         try{
+            // 서버에 이메일 인증 요청
             await ForgotActions.certifiedUser(
                 certified.get("value"),
                 token
             );
         }
+        // 이메일 인증 중 에러 발생시 처리
         catch(e){
             console.log(e);
         }
@@ -156,12 +186,14 @@ class ForgotContainer extends Component {
     handleChange = async () => {
         const {ForgotActions, changePw, token} = this.props;
         try{
+            // 서버에 비밀번호 변경 요청
             await ForgotActions.changeUser(
                 changePw.getIn([0,"value"]),
                 changePw.getIn([1,"value"]),
                 token
             );
         }
+        // 비밀번호 변경 중 에러 발생시 처리
         catch(e){
             console.log(e);
         }

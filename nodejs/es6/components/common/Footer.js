@@ -1,5 +1,6 @@
 import React from "react";
 
+/* Footer UI 컴포넌트 */
 const Footer = () => {
     return(
         <footer>

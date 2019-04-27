@@ -2,6 +2,8 @@ import React from "react";
 import styles from "./css/agency.css";
 import cx from "classnames";
 import Header from "./common/Header";
+
+/* 로딩 컴포넌트 */
 const ViewTemplate = ({children,title,subtitle, loginId, update}) => {
     return (
         <React.Fragment>

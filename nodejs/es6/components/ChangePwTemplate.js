@@ -1,6 +1,8 @@
 import React, {Component}from "react";
 import ChangePwList from "./ChangePwList";
 import Modal from "react-modal";
+
+// 모달창 스타일
 const changePwStyles = {
     content : {
         top                   : "50%",
@@ -20,6 +22,8 @@ const changePwStyles = {
     }
 };
 Modal.setAppElement("#root");
+
+/* 비밀번호 변경 UI 컴포넌트 */
 class ChangePwTemplate extends Component {
     afterOpenModal = () => {
         // references are now sync'd and can be accessed.

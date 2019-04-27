@@ -4,6 +4,7 @@ import FindPwList from "./FindPwList";
 import styles from "./style.css";
 import {Link} from "react-router-dom";
 
+/* 아이디/비밀번호 찾기 UI 컴포넌트 */
 const ForgotTemplate = ({
     onCertifiedUser,
     certified,

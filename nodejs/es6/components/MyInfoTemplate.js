@@ -6,6 +6,7 @@ import Footer from "../components/common/Footer";
 
 import ChangePwTemplate from "./ChangePwTemplate";
 
+/* 회원 정보 UI 컴포넌트 */
 const MyInfoTemplate = ({
     loginId, 
     data, 

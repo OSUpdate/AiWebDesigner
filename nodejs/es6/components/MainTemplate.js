@@ -4,22 +4,26 @@ import Sign from "../containers/signUpApp";
 import Footer from "../components/common/Footer";
 import * as $ from "jquery";
 
-
+/* 메인화면 UI 컴포넌트 */
 class MainTemplate extends Component {
+    // 로딩이 끝난 후 실행되는 함수
     componentDidMount() {
+        // 메뉴바에 이벤트 설정
         $(document).ready(function() {
 
             var toggleAffix = function(affixElement, scrollElement, wrapper) {
             
                 var height = affixElement.outerHeight(),
                     top = wrapper.offset().top;
-              
+                // 스크롤로 인한 현재화면 높이 체크
                 if (scrollElement.scrollTop() >= 100){
+                    // class 추가
                     wrapper.height(height);
                     affixElement.addClass("affix");
                     $(".navbar-nav>li>a").css("color","white");
                 }
                 else {
+                    // class 제거
                     affixElement.removeClass("affix");
                     wrapper.height("auto");
                     $(".navbar-nav>li>a").css("color","#222222");
@@ -27,7 +31,7 @@ class MainTemplate extends Component {
                 
             };
             
-          
+            
             $("#mainNav").each(function() {
                 var ele = $(this),
                     wrapper = $("<div></div>");
@@ -43,6 +47,7 @@ class MainTemplate extends Component {
             
         });
     }
+    // 화면에 보여주기 위한 부분 설정
     render(){
         const {children,title,subtitle} = this.props;
         return (
@@ -72,7 +77,7 @@ class MainTemplate extends Component {
                         </div>
                     </div>
                 </nav>
-                <header className="header">
+                <header className="es6-components-css-agency__header">
                     <div className="container">
                         <div className="intro-text">
                             <div className="intro-lead-in">인공지능이 만드는</div>

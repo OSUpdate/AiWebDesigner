@@ -3,6 +3,7 @@ import ErrorInput from "./ErrorInput";
 import styles from "./style.css";
 import { List, Map } from "immutable";
 
+/* 비밀번호 변경 데이터 리스트 컴포넌트 */
 const ChangePwList = ({changePw, onChange, onKeyUp, onChangeUser}) => {
     const ErrorInputList = changePw.map(
         (item, index) => {

@@ -2,9 +2,9 @@ import React from "react";
 import Find from "./Find";
 import styles from "./style.css";
 import { List, Map } from "immutable";
-
+/* 아이디 찾기 컴포넌트 리스트 */
 const FindIdList = ({findId, onChange, onFindId}) => {
-
+    // 데이터 추출
     const id = findId.get("id");
     const value = findId.get("value");
     const type = findId.get("type");
@@ -27,6 +27,7 @@ const FindIdList = ({findId, onChange, onFindId}) => {
     );
 
 };
+/* 아이디 찾기 컴포넌트 리스트 디폴트 값 */
 FindIdList.defaultProps = {
     findId:List([
         Map({

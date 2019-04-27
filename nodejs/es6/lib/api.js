@@ -36,6 +36,7 @@ export const findPw = (id, email) => axios.post("/api/account/find/pw",{
         email
     }
 });
+/* 이메일 인증을 위한 데이터 요청 */
 export const certified = (certified, token) => axios.post("/api/account/find/certified",{
     request:{
         token,
@@ -75,6 +76,7 @@ export const setHTML = (token, template) => axios.post("/api/view/html",{
         template
     }
 });
+/* 페이지에 맞는 템플릿 데이터 요청 */
 export const update = (token, page) => axios.post("/api/view/update",{
     request:{
         token,
@@ -106,7 +108,7 @@ export const save = (token, html, name, css) => axios.post("/api/view/save",{
         css
     }
 });
-
+/* 편집이 끝나 서버에 압축, 저장 요청 */
 export const endEdit = (token, html, name, css) => axios.post("/api/view/submit",{
     request:{
         token,
@@ -120,7 +122,7 @@ export const endEdit = (token, html, name, css) => axios.post("/api/view/submit"
         getZip(token);
     }
 });
-export const testLoad = (url) => axios.get(url);
+/* 작업 중간에 저장된 데이터 삭제 요청*/
 export const deleteHtml = (token) => axios.post("/api/view/delete",{
     request:{
         token
@@ -133,16 +135,23 @@ export const getChart = (token) => axios.post("/api/view/chart",{
         token
     }
 });
+/* 압축된 작업물 파일 요청 */
 export const getZip = (token) => axios.get("/api/view/download",{
     params:{
         token
     },
     responseType: "blob",
 }).then((response) => {
+    // 압축 파일 데이터를 다운 받기위해 객체 생성
     const url = window.URL.createObjectURL(new Blob([response.data], { type:"application/zip" }));
+    // 링크 생성
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", "html.zip");
+    // 현재 페이지에 링크 추가
     document.body.appendChild(link);
+    // 링크 클릭으로 다운로드 실행
     link.click();
+    // 해당 링크 제거
+    document.body.removeChild(link);
 });

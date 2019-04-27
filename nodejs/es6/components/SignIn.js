@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./style.css";
 
+/* input 컴포넌트 */
 const SignIn = ({value, id, type, onChange, title}) => {
     return (
         <div className={styles.item}>

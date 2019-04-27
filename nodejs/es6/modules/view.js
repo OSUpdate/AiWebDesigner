@@ -176,7 +176,7 @@ export default applyPenders(reducer,[
             }
             );
             if(result){
-                return state.set("view", test)
+                return state.set("recommend", test)
                     .set("template", true);
             }
         },

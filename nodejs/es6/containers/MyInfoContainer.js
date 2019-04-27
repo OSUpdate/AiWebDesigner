@@ -38,26 +38,36 @@ class MyInfoContainer extends Component {
     /* 초기 로그인 여부 체크 함수*/
     initialize = async () => {
         const {SignActions, ChangeActions, token} = this.props;
+        // 로컬저장소에 로그인 데이터 확인
         if(localStorage.getItem("userInfo")){
             const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            // 로그인 데이터가 있을 경우 임시 로그인 설정
             SignActions.tempLogin(userInfo);
             try{
+                // 서버에 차트를 그리기 위한 데이터 요청
                 await ChangeActions.getChart(userInfo.token);
             }
             catch(e){
+                // 로그인 데이터는 있으나 로그인이 안되어 있는 경우
                 if(token === "")
+                    // 기존 로그인 데이터 삭제
                     localStorage.removeItem("userInfo");
+                // 메시지 표시와 메인화면으로 이동
                 ChangeActions.error("서버와 연결에 문제가 발생했습니다.");
             }
             return;
         }
         try{
+            // 로그인 체크
             await SignActions.checkLogin();
             if(token !== ""){
+                // 로그인이 되어 있는 경우 차트를 그리기 위한 데이터 요청
                 await ChangeActions.getChart(token);
             }
         }
+        // 로그인 중 에러 발생시 처리
         catch(e){
+            // 로그인 안되어 있을 경우 처리 함수 호출
             this.handleNotSignIn();
         }
         
@@ -66,10 +76,14 @@ class MyInfoContainer extends Component {
     handleLogout = async () => {
         const {SignActions, history} = this.props;
         try{
+            // 서버에 로그아웃 요청
             await SignActions.logout();
+            // 로컬저장소 데이터 삭제
             localStorage.removeItem("userInfo");
+            // 메인페이지로 이동
             history.push("/");
         }
+        // 로그아웃 중 에러 발생시 처리
         catch(e){
             console.log(e);
         }
@@ -78,12 +92,15 @@ class MyInfoContainer extends Component {
     handlePwInput = (e) => {
         const {ChangeActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 current인 경우
         case "current":
             ChangeActions.inputCurrent(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 password인 경우
         case "password":
             ChangeActions.inputPassword(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 check인 경우
         case "check":
             ChangeActions.inputCheck(e.target.value);
             break;
@@ -93,9 +110,11 @@ class MyInfoContainer extends Component {
     handlePwChange = (e) => {
         const {ChangeActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 password인 경우
         case "password":
             ChangeActions.changePassword(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 check인 경우
         case "check":
             ChangeActions.changeCheck(e.target.value);
             break;
@@ -106,6 +125,7 @@ class MyInfoContainer extends Component {
         const {ChangeActions, change, token} = this.props;
         
         try{
+            // 서버에 비밀번호 변경 요청
             await ChangeActions.changeUser(
                 change.getIn([1,"value"]), 
                 change.getIn([2,"value"]),
@@ -113,6 +133,7 @@ class MyInfoContainer extends Component {
                 change.getIn([0,"value"])    
             );
         }
+        // 비밀번호 변경 중 에러 발생시 처리
         catch(e){
             console.log(e);
         }
@@ -120,39 +141,47 @@ class MyInfoContainer extends Component {
     /* 비밀번호 변경 모달 open 함수 */
     handleOpenModal = () => {
         const {ChangeActions} = this.props;
+        // 비밀번호 변경 모달 open 함수 호출
         ChangeActions.openModal();
     }
     /* 비밀번호 변경 모달 close 함수 */
     handleCloseModal = () => {
         const {ChangeActions} = this.props;
+        // 비밀번호 변경 모달 close 함수 호출
         ChangeActions.closeModal();
     }
     /* 비밀번호 변경 처리 결과 모달 확인 버튼 onClick 함수 */
     handleCloseMessage = () => {
         const {ChangeActions} = this.props;
+        // 메시지 모달 close 함수 호출
         ChangeActions.closeMessage();
     }
     /* 컴포넌트 로드 후 scroll 방지 css 추가*/
     componentDidMount(){
         const {ChangeActions} = this.props;
-
+        // 초기화
         this.initialize();
+        // css 설정
         let view = document.getElementById("view");
         view.className = "view-noOverflow";
     }
     /* 로그인되어 있지 않을 경우 메시지 모달 확인 버튼 onClick 함수 */
     handleCloseNotSignIn = () => {
         const {ChangeActions, history} = this.props;
+        // 메시지 모달 close 함수 호출
         ChangeActions.closeMessage();
+        // 메인화면으로 이동
         history.push("/");
     }
     /* 로그인되어 있지 않을 경우 실행되는 함수 */
     handleNotSignIn = () => {
         const {ChangeActions} = this.props;
+        // 에러 처리 함수 호출
         ChangeActions.error("로그인이 필요한 서비스입니다.");
     }
     /* 컴포넌트 제거 될 때 scroll 방지 css 제거 */
     componentWillUnmount(){
+        // css 제거
         let view = document.getElementById("view");
         view.className = "";
     }

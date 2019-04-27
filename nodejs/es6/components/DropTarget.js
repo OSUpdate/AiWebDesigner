@@ -17,20 +17,24 @@ const parserOptions = {
         }
     }
 };
-class Target extends Component{ 
 
+/* Drop 컴포넌트 */
+class Target extends Component{ 
+    /* drop 이벤트 처리 함수*/
     onDrop = (e) => {
         const {item, onChange, canDrop} = this.props;
+        // Drag 이벤트가 발생한 객체를 찾음
         const insertItem = ReactDOM.findDOMNode(item.component);
-        console.log(e.target === this.element);
         insertItem.style.opacity = 1;
         if(e.target === this.element){
+            // Drop 이벤트 발생 객체 주변애 추가
             this.element.insertAdjacentHTML("beforeend",insertItem.outerHTML);
             $(e.target).removeClass("hover-target--1ncVr");
+            // 데이터 최신화
             onChange(this.element.innerHTML);
             return;
         }
-        
+        // 이벤트 객체 정보 저장
         const className = e.target.className;
         const id = e.target.id;
         const innerHtml = e.target.innerHTML;
@@ -48,12 +52,14 @@ class Target extends Component{
                 console.log(e.target.innerHTML === item.innerHTML);
                 console.log(item.parentNode.innerHTML === innerHtml);
                 */
+                // 같은 요소일 경우 && Drop 가능한 객체 일 경우
                 if(item.outerHTML === e.target.outerHTML && canDrop){
-
+                    // document에 추가
                     item.insertAdjacentHTML("beforeend",insertItem.outerHTML);
                 }
             }
         );
+        // Drop 가능 객체에 테두리 테두리 제거
         $(e.target).removeClass("hover-target--1ncVr");
         onChange(this.element.innerHTML);
         //console.log(this.element.inj);
@@ -65,20 +71,26 @@ class Target extends Component{
         //const findItem = this.element.getElementsByClassName(e.target.className).append(ReactDOM.findDOMNode(item.component));
         //console.log(this.state.children);
     }
-
+    /* Drop 객체 위에서 DragEnter 이벤트 발생시 호출 함수 */
     onDragEnter = (e, isHover) => {
         const {isOverCurrent, canDrop} = this.props;
+        // 현재 요소가 위에 있고 Drop 가능한 객체일 경우
         if(canDrop && isOverCurrent){
+            // Drop 가능 객체에 테두리 설정
             $(e.target).addClass("hover-target--1ncVr");
         }
     }
+    /* Drop 객체 위에서 DragLeave 이벤트 발생시 호출 함수 */
     onDragLeave = (e) => {
         console.log(e,"leave");
         const {isOverCurrent, canDrop} = this.props;
+        // 현재 요소가 위에 있고 Drop 가능한 객체일 경우
         if(canDrop && isOverCurrent){
+            // Drop 가능 객체에 테두리 테두리 제거
             $(e.target).removeClass("hover-target--1ncVr");
         }
     }
+    /* Drop 객체 위에서 DragOver 이벤트 발생시 호출 함수 */
     onDragOver = (e, isHover) => {
         e.preventDefault();
         /*
@@ -101,7 +113,9 @@ class Target extends Component{
         */
         //console.log(e.target);
     }
+    /* 컴포넌트 실행 후 호출 함수 */
     componentDidMount() {
+        // 상태 변수 선언
         this.setState({
             children: this.element
         });
@@ -115,6 +129,7 @@ class Target extends Component{
         //const html = children.replace(/.capture/g,".target");
         let isHover = true;
         const {onDrop, onDragOver,onDragEnter,onDragLeave} = this;
+        // Drop 이벤트 연결
         return connectDropTarget(
             
             <div

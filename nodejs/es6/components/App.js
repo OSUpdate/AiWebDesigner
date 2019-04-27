@@ -9,7 +9,7 @@ import {
     Forgot
 } from "../Page/index.async.js";
 
-
+// 페이지 요청시에 각각 경로에 맞는 파일 읽어들임
 const App = () => {
     return (
         <Switch>

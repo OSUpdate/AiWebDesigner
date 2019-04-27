@@ -2,10 +2,11 @@ import React from "react";
 import ErrorInput from "./ErrorInput";
 import styles from "./style.css";
 import { List, Map } from "immutable";
-
+/* input 컴포넌트 리스트 */
 const SignUpList = ({signUp, onChange, onKeyUp, onClick}) => {
     const SignUpList = signUp.map(
         (item, index) => {
+            // 데이터 추출
             const { id, checked, value, error, type, title } = item.toJS();
             return(
                 <ErrorInput

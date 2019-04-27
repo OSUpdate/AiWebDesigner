@@ -2,6 +2,7 @@ import React from "react";
 import CssItem from "./CssItem";
 import { List, Map } from "immutable";
 
+/* Css 편집기 데이터 리스트 컴포넌트 */
 const CssList = ({css, onChange, onClick}) => {
     const cssList = css.map(
         (css, index)=> {

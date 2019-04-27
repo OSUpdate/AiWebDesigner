@@ -3,10 +3,11 @@ import SignIn from "./SignIn";
 import styles from "./style.css";
 import {Link} from "react-router-dom";
 import { List, Map } from "immutable";
-
+/* input 컴포넌트 리스트 */
 const SignInList = ({signIn, onChange, onClick}) => {
     const SignInList = signIn.map(
         (item, index) => {
+            // 데이터 추출
             const { id, value, type, title} = item.toJS();
             return(
                 <SignIn

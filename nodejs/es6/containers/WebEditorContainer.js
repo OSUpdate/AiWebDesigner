@@ -42,27 +42,39 @@ class WebEditorContainer extends Component {
     /* 초기 로그인 여부 체크 함수 */
     initialize = async () => {
         const {SignActions, EditorActions, PanelActions, token} = this.props;
+        // 로컬저장소에서 로그인 데이터 확인
         if(localStorage.getItem("userInfo")){
             const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            // 로그인 데이터가 있을 경우 임시 로그인 설정
             SignActions.tempLogin(userInfo);
             try{
+                // 서버에 editor 데이터 요청
                 await EditorActions.init(userInfo.token);
+                // 서버에 panel 데이터 요청
                 await PanelActions.init(userInfo.token);
             }
+            // editor, panel 데이터 통신 중 에러 처리
             catch(e){
+                // 로그인 안되어있는 경우 처리함수 호출
                 this.handleNotInit();
             }
             return;
         }
         try {
+            // 서버에 로그인 여부 체크
             await SignActions.checkLogin();
             if(token !== ""){
+                // 서버에 editor 데이터 요청
                 await EditorActions.init(token);
+                // 서버에 panel 데이터 요청
                 await PanelActions.init(token);
             }
         }
+        // 로그인 여부 체크 중 문제 발생시 처리
         catch(e){
+            // 로그인 안되어있는 경우 처리함수 호출
             this.handleNotSignIn();
+            // 로컬저장소 로그인 데이터 삭제
             localStorage.removeItem("userInfo");
         }
         
@@ -83,53 +95,68 @@ class WebEditorContainer extends Component {
     handleCheck = (e,id) => {
         const {PanelActions} = this.props;
         e.currentTarget.blur();
+        // 버튼, 이미지 toggle 함수
         PanelActions.toggle(id);
     }
     /* 메뉴창 toggle 함수 */
     handleMenuToggle = () => {
         const {PanelActions} = this.props;
+        // 메뉴창 toggle 함수 호출
         PanelActions.menuToggle();
     }
+    /* 메뉴창 css toggle 함수 */
     handleCssMenuCheck = (e, id) => {
         const {EditorActions} = this.props;
         e.currentTarget.blur();
-        console.log(e,id);
+        // onClick 이벤트 발생 편집기 toggle 함수 호출
         EditorActions.cssToggle(id);
     }
     /* 코드 편집기 버튼 onClick toogle 함수 */
     handleEditorToggle = (e) => {
         const {EditorActions} = this.props;
         e.currentTarget.blur();
+        // 코드 편집기 toggle 함수 호출
         EditorActions.toggle();
     }
     /* 코드 편집기 코드 입력, 버튼 추가 함수 */
     handleCodeChange = (code) => {
         const {EditorActions} = this.props;
+        // 코드 편집기 onChange 함수 호출
         EditorActions.change(code);
     }
+    /* css 편집기 onChange 함수 */
     handleCssCodeChange = (code, id) => {
         const {EditorActions} = this.props;
+        // css 편집기 onChange 함수 호출
         EditorActions.cssChange([code, id]);
     }
     /* 로그인되어 있지 않을 경우 실행되는 함수 */
     handleNotSignIn = () => {
         const {EditorActions} = this.props;
+        // 에러 처리 함수 호출
         EditorActions.error("로그인이 필요한 서비스입니다.");
     }
+    /* 페이지 초기화 에러 처리 함수 */
     handleNotInit = () => {
         const {EditorActions} = this.props;
+        // 에러 처리 함수 호출
         EditorActions.error("서버와 연결에 문제가 발생했습니다.");
     }
     /* 로그인되어 있지 않을 경우 메시지 모달 확인 버튼 onClick 함수 */
     handleCloseNotSignIn = () => {
         const {EditorActions, history} = this.props;
+        // 메시지 모달 close 함수 호출
         EditorActions.closeMessage();
+        // index 페이지로 전송
         history.push("/");
     }
+    /* 저장 버튼 onClick 처리 함수 */
     handleSave = () => {
         const {EditorActions, token, editor, css, history} = this.props;
+        // 서버에 저장 요청
         EditorActions.save(token, editor.get("content"), editor.get("name"),css);
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        // 로컬 저장소에 데이터 저장
         localStorage.setItem(
             "saveInfo",
             JSON.stringify({
@@ -145,14 +172,17 @@ class WebEditorContainer extends Component {
                 axios.patch(`/editor/${userInfo.id}/${editor.get("name")}/${name}`);
             }
         );*/
+        // 3초 후 저장완료 메시지 모달 close
         setTimeout(()=>EditorActions.closeStatus(),3000);
         
-        console.log(`/editor/${userInfo.id}/${editor.get("name")}`);
+        // 페이지 데이터 재로드
         history.push(`/editor/${userInfo.id}/${editor.get("name")}`);
 
     }
+    /* 완료 버튼 onClick 처리 함수 */
     handleSubmit = async () => {
         const {EditorActions, token, editor, css} = this.props;
+        // 로컬 저장소에 데이터 저장
         localStorage.setItem(
             "saveInfo",
             JSON.stringify({
@@ -160,10 +190,13 @@ class WebEditorContainer extends Component {
             })
         );
         try{
+            // 서버에 저장, 압축 데이터 요청
             await EditorActions.submit(token, editor.get("content"), editor.get("name"), css);
             //await EditorActions.download(token);
+            // 3초 후 저장완료 메시지 모달 close
             setTimeout(()=>EditorActions.closeStatus(),3000);
         }
+        // 서버에서 에러 발생 시 처리
         catch(e){
             console.log(e);
         }
@@ -182,8 +215,10 @@ class WebEditorContainer extends Component {
         PanelActions.insert(["<button>test</button"]);
         */
     }
+    /* 컴포넌트 제거 시 실행 함수*/
     componentWillUnmount() {
         const {EditorActions} = this.props;
+        // 기존 설정값 제거 함수 호출
         EditorActions.unmount();
     }
     /* 실제 화면에 렌더링 해주는 함수 */

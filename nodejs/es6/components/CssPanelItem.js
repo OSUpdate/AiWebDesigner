@@ -3,6 +3,8 @@ import styles from "./css/agency.css";
 import cx from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
+
+/* Css 편집기 패널 데이터 컴포넌트 */
 class CssPanelItem extends Component{
 
     render() {

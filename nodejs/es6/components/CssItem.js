@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import styles from "./css/agency.css";
 import cx from "classnames";
 import CssCodeEditor from "./CssCodeEditor";
+
+/* Css 편집기 데이터 리스트 컴포넌트 */
 class CssItem extends Component{
     render() {
         const {name, code, onChange, toggle, onClick, index} = this.props;

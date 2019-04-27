@@ -15,6 +15,7 @@ import messageModal from"../components/css/agency.css";
 import Loading from "../components/Loading";
 import bcrypt from "bcryptjs";
 
+// 메시지 모달 스타일 
 const messageStyles = {
     content : {
         top                   : "50%",
@@ -35,7 +36,7 @@ const messageStyles = {
         zIndex              :"10021"
     }
 };
-
+// 회원가입 모달 스타일
 const signupStyles = {
     content : {
         top                   : "50%",
@@ -55,7 +56,7 @@ const signupStyles = {
         zIndex              :"10020"
     }
 };
-
+// 로그인 모달 스타일
 const signinStyles = {
     content : {
         top                   : "50%",
@@ -82,13 +83,18 @@ class SignUpListContainer extends Component {
     /* 초기 로그인 여부 체크 함수 */
     initialize = async () => {
         const {SignActions} = this.props;
+        // 로컬저장소에 로그인 데이터 확인
         if(localStorage.getItem("userInfo")){
             const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            // 로그인 데이터가 있을 경우 임시 로그인 설정
             SignActions.tempLogin(userInfo);
             try{
+                // 로그인 체크
                 await SignActions.checkLogin();
             }
+            // 로그인 여부 체크 중 문제 발생시 처리
             catch(e){
+                // 로컬저장소 로그인 데이터 삭제
                 localStorage.removeItem("userInfo");
             }
             return;
@@ -97,13 +103,21 @@ class SignUpListContainer extends Component {
     /* 회원가입 모달 open 함수 */
     signUpOpenModal = () => {
         const {SignActions} = this.props;
+
+        // 회원가입/로그인 모달 open 함수 호출
         SignActions.openModal();
+
+        // 회원가입 메뉴 설정 함수
         SignActions.isSignUp();
     }
     /* 로그인 모달 open 함수 */
     signInOpenModal = () => {
         const {SignActions} = this.props;
+
+        // 회원가입/로그인 모달 open 함수 호출
         SignActions.openModal();
+
+        // 로그인 메뉴 설정 함수
         SignActions.isSignIn();
     }
     /* 모달 open 후 처리 함수 */
@@ -114,48 +128,64 @@ class SignUpListContainer extends Component {
     /* 모달 close 함수 */
     closeModal = () => {
         const {SignActions} = this.props;
+
+        // 모달 close 함수 호출
         SignActions.closeModal();
     }
+    /* 로그아웃 실패 처리 함수 */
     handleLogoutFail = () => {
         const {SignActions} = this.props;
+        // 에러 처리 함수 호출
         SignActions.error("로그아웃에 실패했습니다.");
     }
+    /* 회원가입 실패 처리 함수 */
     handleSignUpFail = () => {
         const {SignActions} = this.props;
+        // 입력 데이터 초기화 함수 호출
         SignActions.clear();
     }
+    /* 로그인 실패 처리 함수 */
     handleSignInFail = () => {
         const {SignActions} = this.props;
+        // 에러 처리 함수 호출
         SignActions.error("아이디 혹은 비밀번호를 확인해주세요.");
     }
     /* 로그아웃 버튼 onClick 함수 */
     handleLogout = async () => {
         const {SignActions} = this.props;
         try{
+            // 서버에 로그아웃 요청
             await SignActions.logout();
+            // 로컬저장소 로그인 데이터 삭제
             localStorage.removeItem("userInfo");
         }
+        // 서버에서 로그아웃 과정중 에러 발생시 처리
         catch(e){
+            // 로그아웃 실패 함수 호출
             this.handleLogoutFail();
         }
     }
     /* 회원가입 버튼 onClick 함수 */
     handleSignUp = async () => {
         const {SignActions, signUp} = this.props;
+        // input 태그 데이터에 문제 있는 항목 가져옴
         const checkedList = signUp.filter(
             (item)=>{
                 return item.get("checked") === true;
             }
         );
+        // input 태그가 비어있는 항목 가져옴
         const valueList = signUp.filter(
             (item)=>{
                 return item.get("value") === "";
             }
         );
+        // 문제가 있을 경우 전송 안함
         if((checkedList.size > 0)|| valueList.size > 0)
             return;
         
         try{
+            // 서버에 회원가입 요청
             await SignActions.signUp(
                 signUp.getIn([0,"value"]),
                 signUp.getIn([1,"value"]),
@@ -163,7 +193,9 @@ class SignUpListContainer extends Component {
                 signUp.getIn([3,"value"])
             );
         }
+        // 회원가입 중 에러 발생시 처리
         catch(e){
+            // 회원가입 에러 처리 함수 호출
             this.handleSignUpFail();
         }
     }
@@ -176,7 +208,9 @@ class SignUpListContainer extends Component {
                 signIn.getIn([1,"value"])
             );
         }
+        // 로그인 중 문제 발생시 처리
         catch(e){
+            // 로그인 에러 처리 함수 호출
             this.handleSignInFail();
         }
     }
@@ -184,15 +218,19 @@ class SignUpListContainer extends Component {
     handleSignUpInput = (e) => {
         const {SignActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 id인 경우
         case "id":
             SignActions.inputId(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 password인 경우
         case "password":
             SignActions.inputPassword(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 check인 경우
         case "check":
             SignActions.inputCheck(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 email인 경우
         case "email":
             SignActions.inputEmail(e.target.value);
             break;
@@ -202,15 +240,19 @@ class SignUpListContainer extends Component {
     handleSignUpChange = (e) => {
         const {SignActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 id인 경우
         case "id":
             SignActions.changeId(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 password인 경우
         case "password":
             SignActions.changePassword(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 check인 경우
         case "check":
             SignActions.changeCheck(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 email인 경우
         case "email":
             SignActions.changeEmail(e.target.value);
             break;
@@ -220,9 +262,11 @@ class SignUpListContainer extends Component {
     handleSignInChange = (e) => {
         const {SignActions} = this.props;
         switch(e.target.name){
+        // 이벤트가 발생한 input 태그가 id인 경우
         case "id":
             SignActions.changeLoginId(e.target.value);
             break;
+        // 이벤트가 발생한 input 태그가 password인 경우
         case "password":
             SignActions.changeLoginPassword(e.target.value);
             break;
@@ -238,12 +282,14 @@ class SignUpListContainer extends Component {
         const {SignActions} = this.props;
         SignActions.isSignIn();
     }
+    /* 메시지 모달 close 함수 */
     handleCloseError = () => {
         const {SignActions} = this.props;
         SignActions.closeMessage();
     }
     /* 컴포넌트 로드가 끝난 후 실행되는 API */
     componentDidMount(){
+        // 초기화
         this.initialize();
     }
     /* 상태 변화가 일어나면 업데이트 여부 결정하는 API */
@@ -268,8 +314,9 @@ class SignUpListContainer extends Component {
     */
     /* 상태 업데이트가 일어난 후 실행되는 API */
     componentDidUpdate(prevProps, prevState) {
+        // 로그인이 되어 있을 경우
         if (prevProps.logged !== this.props.logged && this.props.logged) {
-            // logged가 true가 되면 localStorage에 값을 저장합니다. 
+            // logged가 true가 되면 localStorage에 값을 저장
             localStorage.setItem(
                 "userInfo",
                 JSON.stringify({
@@ -277,11 +324,14 @@ class SignUpListContainer extends Component {
                     token: this.props.token
                 })
             );
+            // 스크롤 높이를 비교
             if(document.documentElement.scrollTop >= 100){
+                // 스타일 지정
                 document.getElementById("uid").style.color = "white";
                 return;
             }
         }
+        // 로그인이 되어있지 않을 경우
         if (prevProps.logged !== this.props.logged && !this.props.logged && document.documentElement.scrollTop >= 100)
             document.getElementById("usign").style.color = "white";
     }

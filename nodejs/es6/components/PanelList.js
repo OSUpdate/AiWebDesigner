@@ -1,8 +1,9 @@
 import React from "react";
 import PanelItem from "./PanelItem";
 import { List, Map } from "immutable";
-
+/* 패널 데이터 리스트 컴포넌트 */
 const PanelList = ({panel}) => {
+    // 버튼, 이미지 패널 컴포넌트 배열 생성
     const panelList = panel.map(
         (panel, index)=> {
             const {id, content,checked} = panel.toJS();
@@ -23,6 +24,8 @@ const PanelList = ({panel}) => {
         </React.Fragment>
     );
 };
+
+/* 패널 데이터 리스트 디폴트 값 */
 PanelList.defaultProps = {
     panel: List([
         Map({
