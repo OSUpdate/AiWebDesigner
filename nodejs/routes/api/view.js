@@ -6,7 +6,12 @@ const phantom = require("phantom");
 var ncp = require("ncp").ncp;
 var archiver = require("archiver");
 var router = express.Router();
-
+const btnReadline = require("readline").createInterface({
+    input: require("fs").createReadStream(__dirname+"/a.html")
+});
+const imgReadline = require("readline").createInterface({
+    input: require("fs").createReadStream(__dirname+"/img.html")
+});
 // 문자로된 숫자를 정렬하기 위한 컬렉터
 let collator = new Intl.Collator(undefined, {numeric: true, sensitivity: "base"});
 // 파일 이름들을 저장하기 위한 리스트
@@ -15,7 +20,16 @@ let filenames = [];
 let templates = [];
 // 템플릿 이미지 경로를 저장하기 위한 리스트
 let srcs =[];
-
+let btn = [];
+let images = [];
+// 버튼들을 읽어옴
+btnReadline.on("line", function (line) {
+    btn.push(line);
+});
+// 이미지들을 읽어옴
+imgReadline.on("line", function (line) {
+    images.push(line);
+});
 // html을 png로 바꿔주는 함수
 const htmlToPng = (path, folder) => {
     // 템플릿명과 동일한 이미지가 존재하면 실행하지 않음
@@ -760,13 +774,8 @@ router.post("/panel", function(req, res, next) {
             Response:{
                 response:{
                     result: true,
-                    button:[
-                        "<a styles=''>test</a>",
-                        
-                    ],
-                    image:[
-
-                    ]
+                    button:btn,
+                    image:images
                 }
             }
         });
