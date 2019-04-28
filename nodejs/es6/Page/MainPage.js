@@ -1,7 +1,7 @@
 import React from "react";
 import MainTemplate from "../components/MainTemplate";
-
-const NotFoundPage = () => {
+// 메인 페이지
+const MainPage = () => {
     return (
         <React.Fragment>
             <MainTemplate/>
@@ -9,4 +9,4 @@ const NotFoundPage = () => {
     );
 };
 
-export default NotFoundPage;
+export default MainPage;

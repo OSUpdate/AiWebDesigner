@@ -1,8 +1,8 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import MyInfoContainer from "../containers/MyInfoContainer";
-//import CodeEditor from "../containers/selectApp";
 
+// 회원정보 페이지
 const MyInfoPage = () => {
     return (
         <React.Fragment>

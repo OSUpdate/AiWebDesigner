@@ -5,7 +5,7 @@ export default function asyncComponent(getComponent){
     return class AsyncComponent extends React.Component{
         static Component = null;
         state = { Component: AsyncComponent.Component };
-
+        // 생성자
         constructor(props){
             super(props);
             if(AsyncComponent.Component) return;

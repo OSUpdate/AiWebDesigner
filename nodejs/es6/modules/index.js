@@ -1,3 +1,4 @@
+// 각각 모듈을 모아서 정의
 export { default as view } from "./view";
 export { default as post } from "./post";
 export { default as panel } from "./panel";

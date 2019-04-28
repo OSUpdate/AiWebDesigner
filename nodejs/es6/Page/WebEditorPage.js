@@ -1,7 +1,7 @@
 import React from "react";
 import WebEditorContainer from "../containers/WebEditorContainer";
 //import CodeEditor from "../containers/selectApp";
-
+// 웹 편집 페이지
 const WebEditorPage = ({match}) => {
     return (
         <React.Fragment>

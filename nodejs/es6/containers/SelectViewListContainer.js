@@ -213,9 +213,6 @@ class SelectViewListContainer extends Component {
         },2000);
     
     }
-    handleCheckedList = (max, array1, array2, array3) => {
-
-    } 
     /* 모든 템플릿 스크롤 이벤트 */
     handleScroll = () => {
         const{end} = this.props;
@@ -317,6 +314,7 @@ class SelectViewListContainer extends Component {
         //console.log(checkedList.toJS());
 
     }
+    /* 체크된 템플릿 체크 해제 함수 */
     handleCancelCheck = () => {
         const {ViewActions} = this.props;
         ViewActions.cancelChecked();
@@ -327,11 +325,13 @@ class SelectViewListContainer extends Component {
         ViewActions.closeMessage();
         
     }
+    /* 초기화중 문제가 생긴 경우 실행 함수 */
     handleNotInit = () => {
         const {ViewActions} = this.props;
         ViewActions.error("서버와 연결에 문제가 발생했습니다.");
         
     }
+    /* 모달 close 함수 */
     handleCloseExceed = () => {
         const {ViewActions} = this.props;
         ViewActions.closeMessage();

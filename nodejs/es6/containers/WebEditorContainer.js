@@ -14,6 +14,7 @@ import Loading from "../components/Loading";
 import styles from "../components/css/agency.css";
 import axios from "axios";
 
+// 메시지 모달 스타일
 const messageStyles = {
     content : {
         top                   : "50%",
@@ -203,6 +204,8 @@ class WebEditorContainer extends Component {
     }
     /* 컴포넌트 로드 후 테스트용 템플릿 추가*/
     componentDidMount(){
+        document.getElementById("agency").disabled = true;
+        document.getElementById("view").style.height = "100%";
         this.initialize();
 
         /*
