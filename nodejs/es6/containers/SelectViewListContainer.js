@@ -302,6 +302,7 @@ class SelectViewListContainer extends Component {
                     return;
                 }
                 // 서버에 선택한 데이터를 기반으로 템플릿 요청
+                ViewActions.loading();
                 await ViewActions.setTemplates(userInfo.token, resultList);
                 return;
             }
@@ -531,7 +532,8 @@ export default connect(
     (state) => ({
         view: state.view.get("view"),
         post: state.post.get("data"),
-        loading: state.pender.pending["view/INIT"],
+        loading:state.view.get("loading"),
+        //loading: state.pender.pending["view/INIT"],
         setTemplate: state.pender.pending["view/SET_TEMPLATE"],
         error: state.pender.failure["view/INIT"],
         loginId: state.sign.get("loginId"),
