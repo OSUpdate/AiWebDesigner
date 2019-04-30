@@ -3,6 +3,7 @@ var bcrypt = require("bcryptjs");
 var fs = require("fs");
 var http = require("http");
 const phantom = require("phantom");
+const path = require('path');
 var ncp = require("ncp").ncp;
 var archiver = require("archiver");
 var router = express.Router();
