@@ -6,6 +6,9 @@ import { pender, applyPenders} from "redux-pender";
 // 초기화
 const INIT = "view/INIT";
 
+// 로딩 설정
+const LOADING = "view/LOADING";
+
 // 모든 템플릿 toggle
 const TOGGLE = "view/TOGGLE";
 
@@ -43,6 +46,9 @@ const DELETE_HTML = "view/DELETE_HTML";
 
 // 초기화 함수
 export const init = createAction(INIT, api.getView);
+
+// 로딩 설정 
+export const loading = createAction(LOADING);
 
 // 모든 템플릿 toggle 함수
 export const toggle = createAction(TOGGLE, id => id);
@@ -107,13 +113,18 @@ const initialState = Map({
     // 페이징 처리 여부
     update:false,
     // 현재 페이지가 마지막인지 체크
-    end:false
+    end:false,
+    // 페이지 로딩중인지 체크
+    loading: true
 });
 // 함수들 구현
 const reducer = handleActions({
     // 페이징 처리 설정 함수
     [UPDATE]: (state, payload) => {
         return state.set("update",true);
+    },
+    [LOADING]: (state,payload) => {
+        return state.set("loading",true);
     },
     // 체크 해제 함수
     [CANCEL_CHECKED]: (state, action) => {
@@ -217,7 +228,8 @@ export default applyPenders(reducer,[
             if(result){
                 return state.set("view",test)
                     .set("recommend", recommendTemplate)
-                    .set("user",userTemplate);
+                    .set("user",userTemplate)
+                    .set("loading",false);
             }
             
         },
@@ -265,6 +277,7 @@ export default applyPenders(reducer,[
             );
             if(result){
                 return state.set("recommend", test)
+                    .set("loading", false)
                     .set("template", true);
             }
         },
