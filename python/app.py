@@ -31,7 +31,7 @@ def search(dirname):
         images.append("png/"+filename+".png")
 def userDir(user):
     fileList = os.listdir("../nodejs/user/"+user)
-    return list(filter(lambda x: int(x) if x.isdigit() else False, fileList))
+    return list(filter(lambda x: x if x.isdigit() else False, fileList))
 def getRecommend(pre_list=None): #============================================ 여기가 추천 템플릿 만들어주는 곳
     #인공지능 추천 템플릿을 가져옴
     # 추천 템플릿의 이름 리스트를 줌
