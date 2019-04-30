@@ -30,7 +30,9 @@ def search(dirname):
             continue
         templates.append(filename)
         images.append("png/"+filename+".png")
-
+def userDir(user):
+    fileList = os.listdir("/Users/HSJMac/Documents/nodejs/user/"+user)
+    return list(filter(lambda x: x if x.isdigit() else False, fileList))
 def getRecommend(pre_list=None): #============================================ 여기가 추천 템플릿 만들어주는 곳
     #인공지능 추천 템플릿을 가져옴
     # 추천 템플릿의 이름 리스트를 줌
@@ -69,6 +71,7 @@ def getPngs(names):
 
 @app.route("/api/get/<token>", methods=['POST'])
 def recommend(token):
+    userList = userDir(request.get_json(silent=True)['request']['user']) #사용자가 작업한 템플릿 이름 리스트
     print()
     print('---<first_recommend>---')
     data = {
@@ -142,9 +145,12 @@ def get(token):
     '''
     print()
     print('-<selected_recommend>--')
+    
     select = (request.get_json(silent=True))['request']['name']
+    userList = userDir(request.get_json(silent=True)['request']['user']) #사용자가 작업한 템플릿 이름 리스트
+    data = list(set(userList + select)) # 사용자 작업한 템플릿과 사용자가 선택한 배열에서 중복요소 
     print('selected templates: ', select)
-
+    
     recommend = getRecommend(select)
     pngs = getPngs(recommend)
 
