@@ -835,6 +835,10 @@ h1, h2, h3, h4, h5, h6{
     padding-top:50px !important;
     margin:0 !important;
 }
+.top_margin{
+    margin-top:70px;
+
+}
 .select_btn{
     position: absolute;
     bottom:0;
@@ -2517,4 +2521,14 @@ body {
 .nav_pills > li > .clicked_btn{
     background-color: #222;
     color:var(--main-button-color) !important;
+}
+.chart_container {
+  position: absolute;
+  top:40px;
+  right:0;
+
+  font-size:1.5em;
+  margin: auto;
+  height: 225px;
+  width: 450px;
 }

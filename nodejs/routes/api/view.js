@@ -3,9 +3,11 @@ var bcrypt = require("bcryptjs");
 var fs = require("fs");
 var http = require("http");
 const phantom = require("phantom");
+const path = require("path");
 var ncp = require("ncp").ncp;
 var archiver = require("archiver");
 var router = express.Router();
+const fileUrl = require("file-url");
 const btnReadline = require("readline").createInterface({
     input: require("fs").createReadStream(__dirname+"/a.html")
 });
@@ -43,7 +45,7 @@ const htmlToPng = (path, folder) => {
                 console.info("Requesting", requestData.url);
             });
             // html 파일 경로 설정
-            const status = await page.open(`file://${__dirname}/Templates/${folder}/index.html`);
+            const status = await page.open(fileUrl(path.normalize(`${__dirname}/Templates/${folder}/index.html`)));
             // html 페이지 크기 설정
             page.property("viewportSize", {width: 960, height: 270});
             // 잘라낼 크기 설정
@@ -66,7 +68,7 @@ const userTemplate = (user) => {
             if(folder === ".DS_Store")
                 return;
             // 읽어들인 폴더가 템플릿 파일이 아니면 건너뜀
-            if(!fs.lstatSync(`./user/${user}/${folder}`).isDirectory())
+            if(!fs.lstatSync(path.normalize(`./user/${user}/${folder}`)).isDirectory())
                 return;
             temp.push({
                 id: index,
@@ -98,7 +100,7 @@ fs.readdirSync(__dirname + "/Templates/")
         if(folder === ".DS_Store")
             return;
         filenames.push(`${folder}`);
-        templates.push(fs.readFileSync(__dirname + `/Templates/${folder}/index.html`,"utf-8"));
+        templates.push(fs.readFileSync(path.normalize(`${__dirname}/Templates/${folder}/index.html`),"utf-8"));
         htmlToPng(`png/${folder}.png`, folder);
         srcs.push(`png/${folder}.png`);
     });
@@ -112,6 +114,7 @@ const getTemplate = (res, name, select, token, callback) => {
     const body = JSON.stringify({
         request:{
             token: token,
+            user: name,
             select: select
         }
     });
@@ -146,7 +149,7 @@ const getTemplate = (res, name, select, token, callback) => {
                     // 사용자가 작업한 템플릿들을 읽어옴
                     const user = userTemplate(name);
                     // 파이썬 서버에서 받아온 추천 템플릿 리스트로 화면에 보여주기 위한 리스트 생성
-                    const recommend = json.Response.response.recommend.map((item, index) => {
+                    const recommend = json.Response.response.data.recommend.map((item, index) => {
                         return {
                             id: index,
                             checked: false,
@@ -155,6 +158,7 @@ const getTemplate = (res, name, select, token, callback) => {
                             src:srcs[parseInt(item)-1],
                         };
                     });
+                    const numb = json.Response.response.data.numb;
                     // 페이징 처리를 위해 파일 이름, 이미지 경로, 템플릿 내용을 30개씩만 보여줌 첫 페이징
                     const filename = filenames.slice(0,30);
                     const src = srcs.slice(0,30);
@@ -168,7 +172,8 @@ const getTemplate = (res, name, select, token, callback) => {
                                 name: filename,
                                 recommend:recommend,
                                 src:src,
-                                user:user
+                                user:user,
+                                numb:numb
                             }
                         }
                     });
@@ -206,7 +211,7 @@ const getTemplate = (res, name, select, token, callback) => {
     req.end();
 };
 /* 인공지능 서버에 사용자 선택 템플릿으로 추천 요청 함수 */
-const aiTemplate = (res, templates, token, callback) => {
+const aiTemplate = (res, templates, token, user,callback) => {
     // 사용자가 선택한 템플릿의 이름정보만 저장
     const name = templates.map((item, index)=>{
         return item.name;
@@ -215,6 +220,7 @@ const aiTemplate = (res, templates, token, callback) => {
     const body = JSON.stringify({
         request:{
             token: token,
+            user: user,
             name: name
         }
     });
@@ -248,16 +254,16 @@ const aiTemplate = (res, templates, token, callback) => {
                 if(json.Response.response.result){
                     //  json.Response.response.templates 에서 파일명 추출 후 각각 파일 오픈 후 내용을 사용자에게 전송
                     let name = [];
-                    const htmls = json.Response.response.templates.map((item, index)=>{
+                    const htmls = json.Response.response.data.recommend.map((item, index)=>{
                         try {
                             name.push(item);
-                            return fs.readFileSync(`${__dirname}/Templates/${item}/index.html`,"utf-8");
+                            return fs.readFileSync(path.normalize(`${__dirname}/Templates/${item}/index.html`),"utf-8");
                         }
                         catch(err){
                             throw err;
                         }
                     });
-                    const recommend = json.Response.response.recommend;
+                    const numb = json.Response.response.data.numb;
                     // 사용자에게 전송 데이터 설정
                     res.json({ 
                         Response:{
@@ -265,8 +271,9 @@ const aiTemplate = (res, templates, token, callback) => {
                                 result: true,
                                 templates:htmls,
                                 name: name,
-                                recommend:recommend,
-                                src:json.Response.response.images
+                                
+                                src:json.Response.response.images,
+                                numb: numb,
                             }
                         }
                     });
@@ -485,7 +492,7 @@ router.post("/set", async function(req, res, next) {
     let session = req.session;
     if(session.loginInfo.token === token){
         /* 인공지능 서버에 템플릿 요청 후 받아온 데이터를 클라이언트로 전송해야함 */
-        await aiTemplate(res, templates, token, ()=>{
+        await aiTemplate(res, templates, token, session.loginInfo.id,()=>{
             
         });
         // 사용자에게 전송

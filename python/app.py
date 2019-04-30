@@ -22,7 +22,6 @@ templates = []
 images = []
 
 mysql.init_app(app)
-
 def search(dirname):
     filenames = os.listdir(dirname)
     for filename in filenames:
@@ -30,7 +29,9 @@ def search(dirname):
             continue
         templates.append(filename)
         images.append("png/"+filename+".png")
-
+def userDir(user):
+    fileList = os.listdir("../nodejs/user/"+user)
+    return list(filter(lambda x: int(x) if x.isdigit() else False, fileList))
 def getRecommend(pre_list=None): #============================================ 여기가 추천 템플릿 만들어주는 곳
     #인공지능 추천 템플릿을 가져옴
     # 추천 템플릿의 이름 리스트를 줌
@@ -41,8 +42,9 @@ def getRecommend(pre_list=None): #============================================ �
     '''
     # 추천 템플릿의 숫자 이름들 반환
     recommend = []
-    recommend = sel.get_list(pre_list=pre_list, num=50)
-    
+    #recommend = sel.get_list(pre_list=pre_list, num=50)
+    data = sel.get_dict(pre_list=pre_list, num=50)
+    print(data)
     '''
     for i in range(0,9):
         names.append(random.randint(1,342))
@@ -55,9 +57,9 @@ def getRecommend(pre_list=None): #============================================ �
         recommend.append(templates[name])
     '''
     
-    print('recommend: ', recommend)
+    #print('recommend: ', recommend)
 
-    return recommend
+    return data
 
 def getPngs(names):
     pngs=[]
@@ -69,13 +71,14 @@ def getPngs(names):
 
 @app.route("/api/get/<token>", methods=['POST'])
 def recommend(token):
+    userList = userDir(request.get_json(silent=True)['request']['user']) #사용자가 작업한 템플릿 이름 리스트
     print()
     print('---<first_recommend>---')
     data = {
         "Response": {
             "response": {
                 "result": True,
-                "recommend": getRecommend()
+                "data": getRecommend(userList)
             }
         }
     }
@@ -140,13 +143,13 @@ def get(token):
         return json_data
 
     '''
+    #userList = userDir(request.get_json(silent=True)['request']['user']) 사용자가 작업한 템플릿 이름 리스트
     print()
     print('-<selected_recommend>--')
     select = (request.get_json(silent=True))['request']['name']
     print('selected templates: ', select)
-
     recommend = getRecommend(select)
-    pngs = getPngs(recommend)
+    pngs = getPngs(recommend['recommend'])
 
     #템플릿 관련 정보 파일이름형태로 전송
     #templates = ["1.html","2.html","3.html","4.html","5.html","6.html","7.html","8.html","9.html","10.html"]
@@ -156,7 +159,7 @@ def get(token):
         "Response":{
             "response":{
                 "result":True,
-                "templates":recommend,
+                "data":recommend,
                 "images":pngs
             }
         }
@@ -216,8 +219,8 @@ def set(token):
     return json_data
 
 if __name__ == "__main__":
-    #search("/Users/HSJMac/Documents/nodejs/routes/api/Templates")
-    search("/Users/cbnm9/Downloads/nodejs/routes/api/Templates")
+    #search("/Users/cbnm9/Downloads/nodejs/routes/api/Templates")
+    search("../nodejs/routes/api/Templates")
     print('-- search complete --')
 
     app.run(host="0.0.0.0",port=4000, debug=True)

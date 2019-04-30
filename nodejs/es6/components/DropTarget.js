@@ -12,7 +12,7 @@ const parserOptions = {
         if (!attribs) return;
    
         if (attribs.type === "text/javascript" || attribs.type === "meta") {
-            console.log(attribs.type);
+            //console.log(attribs.type);
             return;
         }
     }

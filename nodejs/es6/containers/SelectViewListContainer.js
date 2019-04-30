@@ -302,6 +302,7 @@ class SelectViewListContainer extends Component {
                     return;
                 }
                 // 서버에 선택한 데이터를 기반으로 템플릿 요청
+                ViewActions.loading();
                 await ViewActions.setTemplates(userInfo.token, resultList);
                 return;
             }
@@ -390,7 +391,7 @@ class SelectViewListContainer extends Component {
     }
     /* 실제 화면에 렌더링 해주는 함수 */
     render(){
-        const {view, post, error, user, loading, logged, loginId, history, message, title, content, setTemplate, update, continueMsg, continueTitle, continueContent, recommend, template} = this.props; 
+        const {view, chart, post, error, user, loading, logged, loginId, history, message, title, content, setTemplate, update, continueMsg, continueTitle, continueContent, recommend, template} = this.props; 
         const {
             handleCancelCheck,
             handleContinue,
@@ -407,6 +408,32 @@ class SelectViewListContainer extends Component {
             handleScroll,
             home
         } = this;
+        const data = {
+            legend: {
+                labels: {
+                    fontColor: "#222",
+                    fontSize: 20
+                },
+            },
+            labels: [
+                "class1",
+                "class2",
+                "class3",
+                "class4",
+                "class5",
+            ],
+            datasets:[{
+                label: "템플릿 수",
+                backgroundColor: "rgba(44,151,222,0.2)",
+                pointBackgroundColor: "rgba(44,151,222,1)",
+                pointHoverBackgroundColor:"rgba(44,151,222,1)",
+                pointHoverBorderColor: "#c54964",
+                data: chart.toJS(),
+
+            }]
+
+        };
+        
         return (
             <React.Fragment>
                 {logged?
@@ -424,15 +451,20 @@ class SelectViewListContainer extends Component {
                                 logged={logged}
                                 onLogout={handleLogout}   
                             />
+                            
                             <div className={cx(styles.bg_light_gray, styles.h_85, styles.editor)}>
+                                
+                                
                                 <div className={styles.info_view_content}ref={ref => {
                                     this.scroll = ref;
                                 }} onScroll={handleScroll}>
+                                    
                                     <ViewTemplate
                                         update={update}
                                         loginId={loginId}
                                         title="디자인 선택"
                                         subtitle="마음에 드는 디자인을 선택하세요"
+                                        data={data}
                                     >   
                                         <SelectViewList
                                             recommend={recommend}
@@ -531,7 +563,8 @@ export default connect(
     (state) => ({
         view: state.view.get("view"),
         post: state.post.get("data"),
-        loading: state.pender.pending["view/INIT"],
+        loading:state.view.get("loading"),
+        //loading: state.pender.pending["view/INIT"],
         setTemplate: state.pender.pending["view/SET_TEMPLATE"],
         error: state.pender.failure["view/INIT"],
         loginId: state.sign.get("loginId"),
@@ -548,7 +581,8 @@ export default connect(
         continueTitle: state.view.getIn(["continue","title"]),
         continueContent: state.view.getIn(["continue","content"]),
         recommend: state.view.get("recommend"),
-        user:state.view.get("user")
+        user:state.view.get("user"),
+        chart: state.view.get("chart")
 
     }),
     (dispatch) => ({

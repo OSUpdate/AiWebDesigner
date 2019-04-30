@@ -3,8 +3,8 @@ import pickle
 import random
 
 # 군집화 데이터(pickle 파일의 경로)
-pk_path = 'C:/Users/cbnm9/Downloads/python/data/clusters.pickle'
-
+#pk_path = 'C:/Users/cbnm9/Downloads/python/data/clusters.pickle'
+pk_path = './data/clusters.pickle'
 # Selector 클래스 - 군집화 데이터에 대한 선택 작업하는 객체
 class Selector:
 
@@ -126,10 +126,26 @@ class Selector:
         # 위에서 지정한 파일 갯수를 사용해 추천할 파일목록 만들기
         names = self.make_names(numbs = numbs)
         print('-  -  -  -  -  -  -  - ')
-
+        
         # 추천할 파일 이름 리스트 반환
         return names
+    def get_dict(self, pre_list=None, num=50):
+        numbs=[]
+        names=[]
 
+        print('------<get_list>-------')
+        # pre_list 여부에 따라 각 클래스 별 추천할 파일 갯수 지정
+        numbs = self.make_numbs(pre_list = pre_list, num = num)
+        print('-  -  -  -  -  -  -  - ')
+        # 위에서 지정한 파일 갯수를 사용해 추천할 파일목록 만들기
+        names = self.make_names(numbs = numbs)
+        print('-  -  -  -  -  -  -  - ')
+        data = {
+            "recommend": names,
+            "numb":numbs
+        }
+        # 추천할 파일 이름 리스트 반환
+        return data
 
 # 저장된 군집화 데이터 가져오고, 화면에 출력해보기
 if __name__ == '__main__':
