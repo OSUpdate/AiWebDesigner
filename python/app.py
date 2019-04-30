@@ -31,7 +31,7 @@ def search(dirname):
         templates.append(filename)
         images.append("png/"+filename+".png")
 def userDir(user):
-    fileList = os.listdir("/Users/cbnm9/Downloads/nodejs/user"+user)
+    fileList = os.listdir("/Users/cbnm9/Downloads/nodejs/user/"+user)
     #fileList = os.listdir("/Users/HSJMac/Documents/nodejs/user/"+user)
     return list(filter(lambda x: x if x.isdigit() else False, fileList))
 def getRecommend(pre_list=None): #============================================ 여기가 추천 템플릿 만들어주는 곳
