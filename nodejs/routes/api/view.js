@@ -112,6 +112,7 @@ const getTemplate = (res, name, select, token, callback) => {
     const body = JSON.stringify({
         request:{
             token: token,
+            user: name,
             select: select
         }
     });
@@ -206,7 +207,7 @@ const getTemplate = (res, name, select, token, callback) => {
     req.end();
 };
 /* 인공지능 서버에 사용자 선택 템플릿으로 추천 요청 함수 */
-const aiTemplate = (res, templates, token, callback) => {
+const aiTemplate = (res, templates, token, user,callback) => {
     // 사용자가 선택한 템플릿의 이름정보만 저장
     const name = templates.map((item, index)=>{
         return item.name;
@@ -215,6 +216,7 @@ const aiTemplate = (res, templates, token, callback) => {
     const body = JSON.stringify({
         request:{
             token: token,
+            user: user,
             name: name
         }
     });
@@ -485,7 +487,7 @@ router.post("/set", async function(req, res, next) {
     let session = req.session;
     if(session.loginInfo.token === token){
         /* 인공지능 서버에 템플릿 요청 후 받아온 데이터를 클라이언트로 전송해야함 */
-        await aiTemplate(res, templates, token, ()=>{
+        await aiTemplate(res, templates, token, session.loginInfo.id,()=>{
             
         });
         // 사용자에게 전송
