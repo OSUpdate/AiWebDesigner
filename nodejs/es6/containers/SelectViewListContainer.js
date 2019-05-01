@@ -49,34 +49,46 @@ class SelectViewListContainer extends Component {
             try{
                 // 서버에 view 데이터 요청
                 await ViewActions.init(userInfo.token);
-                // 서버에 로그인 여부 체크
-                await SignActions.checkLogin();
             }
-            // 로그인 여부, 데이터 요청 중 에러 발생시 처리
+            // 데이터 요청 중 에러 발생시 처리
             catch(e){
                 if(token === "")
                     // 로컬저장소 로그인데이터 삭제
                     localStorage.removeItem("userInfo");
-                // 로그인 안되어있는 경우 처리함수 호출
+                // 초기화 에러 발생 경우 처리함수 호출
                 this.handleNotInit();
             }
+            try{
+                // 서버에 로그인 여부 체크
+                await SignActions.checkLogin();
+            }
+            // 로그인 여부 에러 발생시 처리
+            catch(e){
+                this.handleNotSignIn();
+            }
             return;
-        }
-        // 로컬저장소에 로그인 데이터가 없는 경우
-        try{
+        } 
+        try {
             // 서버에 로그인 여부 체크
             await SignActions.checkLogin();
-            if(token !== "")
+            if(token !== ""){
+                try{
                 // 서버에 view 데이터 요청
-                await ViewActions.init(token);
+                    await ViewActions.init(token);
+                }
+                catch(e){
+                    // 초기화 에러 발생 경우 처리함수 호출
+                    this.handleNotInit();
+                }
+            }
         }
-        // 로그인 여부, 데이터 요청 중 에러 발생시 처리
+        // 로그인 여부 체크 중 문제 발생시 처리
         catch(e){
             // 로그인 안되어있는 경우 처리함수 호출
             this.handleNotSignIn();
-            
+            // 로컬저장소 로그인 데이터 삭제
+            localStorage.removeItem("userInfo");
         }
-        
     }
     /* 로그아웃 버튼 onClick 함수 */
     handleLogout = async () => {

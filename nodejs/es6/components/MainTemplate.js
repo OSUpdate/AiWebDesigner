@@ -1,11 +1,23 @@
 import React, {Component} from "react";
-import { Link } from "react-router-dom";
 import Sign from "../containers/signUpApp";
 import Footer from "../components/common/Footer";
+import {bindActionCreators} from "redux";
+import * as signActions from "../modules/sign";
+import { connect } from "react-redux";
 import * as $ from "jquery";
-
+import {withRouter, Link} from "react-router-dom";
 /* 메인화면 UI 컴포넌트 */
 class MainTemplate extends Component {
+    /* 회원가입 모달 open 함수 */
+    signUpOpenModal = () => {
+        const {SignActions} = this.props;
+
+        // 회원가입/로그인 모달 open 함수 호출
+        SignActions.openModal();
+
+        // 회원가입 메뉴 설정 함수
+        SignActions.isSignUp();
+    }
     // 로딩이 끝난 후 실행되는 함수
     componentDidMount() {
         // 메뉴바에 이벤트 설정
@@ -49,7 +61,8 @@ class MainTemplate extends Component {
     }
     // 화면에 보여주기 위한 부분 설정
     render(){
-        const {children,title,subtitle} = this.props;
+        const {children,title,subtitle, } = this.props;
+        const {signUpOpenModal} = this;
         return (
             <div className="index">
                 <nav id="mainNav" className="navbar navbar-default navbar-custom navbar-fixed-top" >
@@ -72,7 +85,7 @@ class MainTemplate extends Component {
                                     <a className="page-scroll" href="#about">제작</a>
                                 </li>
                                 
-                                <Sign/>
+                                <Sign />
                             </ul>
                         </div>
                     </div>
@@ -137,7 +150,7 @@ class MainTemplate extends Component {
                                     <h3>시작하기</h3>
                                     <p>AWS 서비스를 이용하기 위해선 회원가입 후, 시작하기 버튼을 눌러 나오는 다양한 디자인 중 마음에 드는 홈페이지 디자인을 선택하세요!</p>                    
                                     <div className="space"></div>
-                                    <a className="line-btn-l">회원가입</a> 
+                                    <a className="line-btn-l" onClick={signUpOpenModal}>회원가입</a> 
                                 </div>
                                 <div className="five columns picture make-it-appear-left" >
                                     <img src="img/select.png" alt="EXEMPLE"/>
@@ -154,7 +167,7 @@ class MainTemplate extends Component {
 					                <h3>편집하기</h3>
 					                <p>저희가 제공해주는 버튼, 이미지 등을 드래그로 간단하게 추가하거나 직접 HTML 태그를 이용해 수정할 수 있습니다.</p>
                                     <div className="space"></div>
-                                    <a className="line-btn-l">시작하기</a> 
+                                    <Link to="/select" className="line-btn-l">시작하기</Link> 
 				                </div>
 			                </div>
                         </div>
@@ -181,4 +194,9 @@ class MainTemplate extends Component {
         );
     }
 }
-export default MainTemplate;
+export default connect(
+    (state) => ({}),
+    (dispatch) => ({
+        SignActions: bindActionCreators(signActions, dispatch)
+    })  
+)(withRouter(MainTemplate));

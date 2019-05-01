@@ -56,7 +56,7 @@ class WebEditorContainer extends Component {
             }
             // editor, panel 데이터 통신 중 에러 처리
             catch(e){
-                // 로그인 안되어있는 경우 처리함수 호출
+                // 초기화 에러 발생한 경우 처리함수 호출
                 this.handleNotInit();
             }
             return;
@@ -65,10 +65,16 @@ class WebEditorContainer extends Component {
             // 서버에 로그인 여부 체크
             await SignActions.checkLogin();
             if(token !== ""){
-                // 서버에 editor 데이터 요청
-                await EditorActions.init(token);
-                // 서버에 panel 데이터 요청
-                await PanelActions.init(token);
+                try{
+                    // 서버에 editor 데이터 요청
+                    await EditorActions.init(token);
+                    // 서버에 panel 데이터 요청
+                    await PanelActions.init(token);
+                }
+                catch(e){
+                    // 초기화 에러 발생한 경우 처리함수 호출
+                    this.handleNotInit();
+                }
             }
         }
         // 로그인 여부 체크 중 문제 발생시 처리

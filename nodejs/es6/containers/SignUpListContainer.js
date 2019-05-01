@@ -82,7 +82,7 @@ Modal.setAppElement("#root");
 class SignUpListContainer extends Component {
     /* 초기 로그인 여부 체크 함수 */
     initialize = async () => {
-        const {SignActions} = this.props;
+        const {SignActions, token} = this.props;
         // 로컬저장소에 로그인 데이터 확인
         if(localStorage.getItem("userInfo")){
             const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -95,7 +95,8 @@ class SignUpListContainer extends Component {
             // 로그인 여부 체크 중 문제 발생시 처리
             catch(e){
                 // 로컬저장소 로그인 데이터 삭제
-                localStorage.removeItem("userInfo");
+                if(token === "")
+                    localStorage.removeItem("userInfo");
             }
             return;
         }
@@ -324,6 +325,7 @@ class SignUpListContainer extends Component {
                     token: this.props.token
                 })
             );
+            console.log(localStorage);
             // 스크롤 높이를 비교
             if(document.documentElement.scrollTop >= 100){
                 // 스타일 지정
@@ -353,6 +355,7 @@ class SignUpListContainer extends Component {
             handleCloseError,
             handleSignUp
         } = this;
+
 	    return (
             <React.Fragment>
                 {logged?
