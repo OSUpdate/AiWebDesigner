@@ -425,6 +425,7 @@ class SelectViewListContainer extends Component {
             datasets:[{
                 label: "템플릿 수",
                 backgroundColor: "rgba(44,151,222,0.2)",
+                pointBorderColor:"rgba(0,0,0,0.1)",
                 pointBackgroundColor: "rgba(44,151,222,1)",
                 pointHoverBackgroundColor:"rgba(44,151,222,1)",
                 pointHoverBorderColor: "#c54964",

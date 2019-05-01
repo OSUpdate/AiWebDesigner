@@ -12,6 +12,9 @@ const ViewTemplate = ({children,title,subtitle, loginId, update, data}) => {
         scale: {
             pointLabels: {
                 fontSize: 15,
+            },
+            ticks: {
+                backdropColor: "rgb(238, 238, 238, 1)",
             }
         },
         legend: {
@@ -21,12 +24,14 @@ const ViewTemplate = ({children,title,subtitle, loginId, update, data}) => {
             },
             
         },
+        
         elements:{
             backgroundColor: "#222"
         },
         // 크기 변경 허용
         responsive: true,
         maintainAspectRatio: true,
+        
     };
     return (
         <React.Fragment>

@@ -1206,7 +1206,7 @@ fieldset[disabled] .btn-xl.active {
     font-size: 1.5em;
   }
 }
-.header {
+.es6-components-css-agency__header {
   background-image: url("../img/header-bg-main-origin.jpg");
   background-repeat: no-repeat;
   background-attachment: scroll;
@@ -1218,12 +1218,12 @@ fieldset[disabled] .btn-xl.active {
   text-align: center;
   color: white;
 }
-.header .intro-text {
+.es6-components-css-agency__header .intro-text {
   padding-top: 100px;
   padding-bottom: 50px;
   color : #222222;
 }
-.header .intro-text .intro-lead-in {
+.es6-components-css-agency__header .intro-text .intro-lead-in {
   font-family: "Droid Serif", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   font-weight: 600;
@@ -1231,7 +1231,7 @@ fieldset[disabled] .btn-xl.active {
   line-height: 50px;
   margin-bottom: 25px;
 }
-.header .intro-text .intro-heading {
+.es6-components-css-agency__header .intro-text .intro-heading {
   font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-transform: uppercase;
   font-weight: 700;
@@ -1241,11 +1241,11 @@ fieldset[disabled] .btn-xl.active {
 }
 
 @media (min-width: 768px) {
-  .header .intro-text {
+  .es6-components-css-agency__header .intro-text {
     padding-top: 300px;
     padding-bottom: 200px;
   }
-  .header .intro-text .intro-lead-in {
+  .es6-components-css-agency__header .intro-text .intro-lead-in {
     font-family: "Droid Serif", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-style: italic;
     font-weight: 600;
@@ -1253,7 +1253,7 @@ fieldset[disabled] .btn-xl.active {
     line-height: 75px;
     margin-bottom: 50px;
   }
-  .header .intro-text .intro-heading {
+  .es6-components-css-agency__header .intro-text .intro-heading {
     font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-transform: uppercase;
     font-weight: 700;
