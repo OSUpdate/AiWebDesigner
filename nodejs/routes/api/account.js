@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 });
 // 이메일 인증시 이메일 보내는 계정
 const server = emailjs.server.connect({
-    user: "",
+    user: "force185@naver.com",
     password: "",
     host: "smtp.naver.com",
     port: 465,
@@ -379,7 +379,7 @@ const signupDB = async (res, req) => {
                 // 세선 발급
                 req.session.loginInfo = {
                     token: token,
-                    id: req.id
+                    id: req.body.request.id
                 };
                 // 사용자 폴더 생성
                 newFolder(req.body.request.id);
