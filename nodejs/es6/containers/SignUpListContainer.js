@@ -325,7 +325,6 @@ class SignUpListContainer extends Component {
                     token: this.props.token
                 })
             );
-            console.log(localStorage);
             // 스크롤 높이를 비교
             if(document.documentElement.scrollTop >= 100){
                 // 스타일 지정

@@ -200,7 +200,6 @@ export default applyPenders(reducer,[
             const templates = fromJS(response.templates);
             const recommend = response.recommend;
             const numb = response.numb;
-            console.log(numb);
             const filename = response.name;
             const result = response.result;
             const user = response.user;

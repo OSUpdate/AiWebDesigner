@@ -82,7 +82,6 @@ class Target extends Component{
     }
     /* Drop 객체 위에서 DragLeave 이벤트 발생시 호출 함수 */
     onDragLeave = (e) => {
-        console.log(e,"leave");
         const {isOverCurrent, canDrop} = this.props;
         // 현재 요소가 위에 있고 Drop 가능한 객체일 경우
         if(canDrop && isOverCurrent){
