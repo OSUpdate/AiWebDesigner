@@ -159,6 +159,44 @@ const changePw = async (res, req) =>{
         });
     }
 };
+// 로그아웃 함수
+const logout = async (token) => {
+    try {
+        // mysql 연결
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            // 계정 조회
+            connection.query("update logged set token = ? where token = ?", ["", token]);
+
+        // 쿼리에서 에러 발생시 처리
+        } catch(err) {
+            console.log("Query Error",err);
+            // db 연결 해제
+            connection.release();
+            // 로그인 실패
+            return res.status(401).json({
+                Response: {
+                    response: {
+                        result: false,
+                        error: "존재하지 않는 아이디입니다."
+                    }
+                }
+            });
+        }
+    // db 연결 에러 발생시 처리
+    } catch(err) {
+        console.log("DB Error",err);
+        // 로그인 실패
+        return res.status(401).json({
+            Response: {
+                response: {
+                    result: false,
+                    error: "서버와 연결에 문제가 발생했습니다."
+                }
+            }
+        });
+    }
+};
 // 로그인 처리 함수
 const signin = async (res, req) => {
     try {
@@ -166,9 +204,23 @@ const signin = async (res, req) => {
         const connection = await pool.getConnection(async conn => conn);
         try {
             // 계정 조회
-            const [rows] = await connection.query("select * from userinfo where id = ?", [req.body.request.id]);
+            const shasum = crypto.createHash("sha256");
+            shasum.update(req.body.request.password);
+            const pw = shasum.digest("hex");
+            const [rows] = await connection.query("select * from userinfo where id = ? and password = ?", [req.body.request.id, pw]);
+            if(!rows)
+                return res.status(401).json({
+                    Response: {
+                        response: {
+                            result: false,
+                            error: "존재하지 않는 아이디입니다."
+                        }
+                    }
+                });
             // 토큰 생성
             const token = bcrypt.hashSync(req.body.request.id + Date.now()).replace(/\//g,"");
+            // db에 토큰 update
+            await connection.query("update logged set token = ? where uid = ?", [token, req.body.request.id]);
             // 사용자에게 토큰 발급
             req.session.loginInfo = {
                 token:token,
@@ -376,6 +428,8 @@ const signupDB = async (res, req) => {
                 connection.release();
                 // 토큰 발급
                 const token = bcrypt.hashSync(req.body.request.id + Date.now()).replace(/\//g, "");
+                // db에 토큰 테이블 삽입
+                await connection.query("insert into logged (token, uid) values(?, ?)", [token, req.body.request.id]);
                 // 세선 발급
                 req.session.loginInfo = {
                     token: token,
@@ -482,6 +536,7 @@ router.get("/getinfo", function (req, res, next) {
 });
 /* 로그아웃 */
 router.post("/logout", function (req, res, next) {
+    logout(req.body.request.token);
     req.session.destroy(()=> {
         return req.session;
     });

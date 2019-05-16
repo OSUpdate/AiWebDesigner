@@ -3,7 +3,10 @@ from flaskext.mysql import MySQL
 import selector
 import os
 import json
+from database import Database
 import random
+
+
 
 # 서버의 동작에 사용되는 객체들
 app = Flask(__name__)
@@ -11,17 +14,15 @@ mysql = MySQL()
 sel = selector.Selector()
 print('-- object create complete --')
 
-# 디비 연결 아이디
-app.config['MYSQL_DATABASE_USER'] = ""
-# 디비 연결 비밀번호
-app.config['MYSQL_DATABASE_PASSWORD'] = ""
-# 연결할 디비
-app.config['MYSQL_DATABASE_DB'] = ""
-    
 templates = []
 images = []
 
 mysql.init_app(app)
+def getUid(token):
+    db = Database()
+    sql = "select uid from logged where token = %s"
+    row = db.executeOne(sql, token)
+    return row
 def search(dirname):
     filenames = os.listdir(dirname)
     for filename in filenames:
@@ -71,6 +72,19 @@ def getPngs(names):
 
 @app.route("/api/get/<token>", methods=['POST'])
 def recommend(token):
+
+    uid = getUid(token)
+    if not uid['uid']:
+        data = {
+            "Response": {
+                "response": {
+                    "result": False
+                }
+            }
+        }
+        json_data = json.dumps(data)
+        return json_data
+
     userList = userDir(request.get_json(silent=True)['request']['user']) #사용자가 작업한 템플릿 이름 리스트
     print()
     print('---<first_recommend>---')
@@ -98,6 +112,20 @@ def get(token):
     #cursor.callproc("함수명", 인자) 데이터베이스에 저장된 프로시저(함수) 이용할 경우
 
     #data = cursor.fetchall() #결과값을 받아옴
+
+    uid = getUid(token)
+    if not uid['uid']:
+        data = {
+            "Response": {
+                "response": {
+                    "result": False
+                }
+            }
+        }
+        json_data = json.dumps(data)
+        return json_data
+
+
     '''
     #성공시 실행
     if len(data) > 0:
