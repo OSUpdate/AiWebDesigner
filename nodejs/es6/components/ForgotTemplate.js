@@ -49,7 +49,7 @@ const ForgotTemplate = ({
                                                     <li className={styles.toggle}>
                                                         <button className={forgotToggle?["space " ,styles.test].join(""):"space"} onClick={onIdToggle}><h4>아이디 찾기</h4></button>
                                                     </li>
-                                                    <li className={[styles.toggle, " wall"].join("")}><h4>|</h4></li>
+                                                    
                                                     <li className={styles.toggle}>
                                                         <button className={forgotToggle?"space":["space " ,styles.test].join("")} onClick={onPwToggle}><h4>비밀번호 찾기</h4></button>
                                                     </li>

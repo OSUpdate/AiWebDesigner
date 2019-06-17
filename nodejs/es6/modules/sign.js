@@ -174,8 +174,7 @@ const initialState = Map({
     // 로그인 아이디
     loginId:"",
     // 로그인 토큰
-    token:"",
-    mainModal:false
+    token:""
 });
 // 0번이 아이디 
 // 1번이 패스워드

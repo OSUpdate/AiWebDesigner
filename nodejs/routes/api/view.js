@@ -45,7 +45,7 @@ const htmlToPng = (path, folder) => {
                 console.info("Requesting", requestData.url);
             });
             // html 파일 경로 설정
-            const status = await page.open(fileUrl(path.normalize(`${__dirname}/Templates/${folder}/index.html`)));
+            const status = await page.open(`${__dirname}/Templates/${folder}/index.html`);
             // html 페이지 크기 설정
             page.property("viewportSize", {width: 960, height: 270});
             // 잘라낼 크기 설정
@@ -68,7 +68,7 @@ const userTemplate = (user) => {
             if(folder === ".DS_Store")
                 return;
             // 읽어들인 폴더가 템플릿 파일이 아니면 건너뜀
-            if(!fs.lstatSync(path.normalize(`./user/${user}/${folder}`)).isDirectory())
+            if(!fs.lstatSync(`./user/${user}/${folder}`).isDirectory())
                 return;
             temp.push({
                 id: index,
@@ -77,6 +77,7 @@ const userTemplate = (user) => {
                 body: templates[parseInt(folder)-1],
                 src:srcs[parseInt(folder)-1]
             });
+
         });
     return temp;
 };
@@ -100,7 +101,7 @@ fs.readdirSync(__dirname + "/Templates/")
         if(folder === ".DS_Store")
             return;
         filenames.push(`${folder}`);
-        templates.push(fs.readFileSync(path.normalize(`${__dirname}/Templates/${folder}/index.html`),"utf-8"));
+        templates.push(fs.readFileSync(`${__dirname}/Templates/${folder}/index.html`,"utf-8"));
         htmlToPng(`png/${folder}.png`, folder);
         srcs.push(`png/${folder}.png`);
     });

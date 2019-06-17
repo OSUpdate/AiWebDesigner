@@ -153,10 +153,10 @@ class SignUpListContainer extends Component {
     }
     /* 로그아웃 버튼 onClick 함수 */
     handleLogout = async () => {
-        const {SignActions} = this.props;
+        const {SignActions, token} = this.props;
         try{
             // 서버에 로그아웃 요청
-            await SignActions.logout();
+            await SignActions.logout(token);
             // 로컬저장소 로그인 데이터 삭제
             localStorage.removeItem("userInfo");
         }

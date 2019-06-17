@@ -74,10 +74,10 @@ class MyInfoContainer extends Component {
     }
     /* 로그아웃 버튼 onClick 함수 */
     handleLogout = async () => {
-        const {SignActions, history} = this.props;
+        const {SignActions, history, token} = this.props;
         try{
             // 서버에 로그아웃 요청
-            await SignActions.logout();
+            await SignActions.logout(token);
             // 로컬저장소 데이터 삭제
             localStorage.removeItem("userInfo");
             // 메인페이지로 이동

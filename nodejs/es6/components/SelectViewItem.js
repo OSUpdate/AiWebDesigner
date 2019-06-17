@@ -76,6 +76,7 @@ class SelectViewItem extends Component {
             mouseEnter,
             itemCheck,
         } = this;
+
         return (
             <div className={cx(styles.col_md_4, styles.col_sm_4, styles.portfolio_item)} >
                 <a onClick={(e) => onCheck(e, id)} className={styles.portfolio_link}>

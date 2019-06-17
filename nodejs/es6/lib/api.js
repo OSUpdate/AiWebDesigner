@@ -21,7 +21,11 @@ export const signUp = (id,password,check,email) => axios.post("/api/account/sign
 export const checkLogin = () => axios.get("/api/account/getinfo");
 
 /* 로그아웃 요청 */
-export const logout = () => axios.post("/api/account/logout");
+export const logout = (token) => axios.post("/api/account/logout", {
+    request:{
+        token
+    }
+});
 
 /* 아이디 찾기 서버로 전송 */
 export const findId = (email) => axios.post("/api/account/find/id", {

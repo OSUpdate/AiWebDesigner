@@ -1530,6 +1530,7 @@ fieldset[disabled] .btn-xl.active {
     color:white !important;
     font-size: 20px !important;
     text-align: right !important;
+    text-decoration: none;
 }
 .code_header p{
     font-weight: 400 !important;

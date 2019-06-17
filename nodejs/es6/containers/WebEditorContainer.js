@@ -88,10 +88,15 @@ class WebEditorContainer extends Component {
     }
     /* 로그아웃 버튼 onClick 함수 */
     handleLogout = async () => {
-        const {SignActions, history} = this.props;
+        const {SignActions, history, token} = this.props;
         try{
-            await SignActions.logout();
+            // 서버에 로그아웃 요청
+            await SignActions.logout(token);
+            // 로컬저장소 임시 데이터 삭제
             localStorage.removeItem("userInfo");
+            // css 파일 활성화
+            document.getElementById("agency").disabled = false;
+            // 홈화면 이동
             history.push("/");
         }
         catch(e){
@@ -210,8 +215,11 @@ class WebEditorContainer extends Component {
     }
     /* 컴포넌트 로드 후 테스트용 템플릿 추가*/
     componentDidMount(){
+        // css 비활성화
         document.getElementById("agency").disabled = true;
+        // css 설정
         document.getElementById("view").style.height = "100%";
+        // 초기화
         this.initialize();
 
         /*

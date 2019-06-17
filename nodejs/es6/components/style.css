@@ -121,6 +121,9 @@
     -o-transform: scale(0.9);
     transform: scale(0.9);
 }
+.toggle{
+    margin-right: 25px;
+}
 .toggle p{
     display: inline;
     color:#aaa;

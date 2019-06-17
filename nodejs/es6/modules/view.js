@@ -198,11 +198,11 @@ export default applyPenders(reducer,[
             const over = response.continue;
             const source = response.src;
             const templates = fromJS(response.templates);
-            const recommend = response.recommend;
+            const recommend = fromJS(response.recommend);
             const numb = response.numb;
             const filename = response.name;
             const result = response.result;
-            const user = response.user;
+            const user = fromJS(response.user);
             // 이전에 작업한 내역이 있을 경우
             if(over){
                 return state.setIn(["continue", "modal"], true)
@@ -220,12 +220,34 @@ export default applyPenders(reducer,[
                 });
             });
             // 추천 템플릿 데이터 리스트 생성
-            const recommendTemplate = recommend.map((item) => {
-                return Map(item);
+            const recommendTemplate = recommend.map((item, index) => {
+                /*
+                console.log(item);
+                return Map({
+                    id: index,
+                    checked: false,
+                    name:filename[index],
+                    body: item,
+                    src:source[index]
+                });
+                */
+
+                return Map(item.toJS());
+                
             });
             // 최근 작업한 템플릿 데이터 리스트 생성
-            const userTemplate = user.map((item)=>{
-                return Map(item);
+            const userTemplate = user.map((item, index)=>{
+                /*
+                console.log(item);
+                return Map({
+                    id: index,
+                    checked: false,
+                    name:filename[index],
+                    body: item,
+                    src:source[index]
+                });
+                */
+                return Map(item.toJS());
             });
             // 데이터 할당
             if(result){
