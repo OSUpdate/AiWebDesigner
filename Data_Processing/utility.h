@@ -14,6 +14,12 @@ c		: 확인할 문자
 반환 값 : 숫자면 1, 아니면 0 반환
 */
 int isNumber(char c);
+/*
+문자 하나가 영어 문자인지 확인하는 함수
+c		: 확인할 문자
+반환 값 : 영어 문자면 1, 아니면 0 반환
+*/
+int isChar(char c);
 
 /*
 키보드(stdin)에서 입력받는 함수
@@ -72,3 +78,50 @@ name	: 마지막으로 rename한 파일의 이름 +1
 반환 값 : 성공 1, 오류 0
 */
 int write_last_file_name(int name);
+
+/*
+qsort 함수를 사용하기 위해 정의한 함수, int형 오름차순 정렬
+*/
+int static compare(const void* first, const void* second);
+
+/*
+지정한 디렉토리 내 폴더들의 이름의 시작과 끝을 찾는 함수
+dir		: 폴더가 위치한 디렉토리
+start	: 처음 폴더의 이름
+end		: 마지막 폴더의 이름
+반환 값 : 성공 1, 오류 0
+*/
+int get_folder_list(char *dir, int *start, int *end);
+
+/*
+문자열 내 특정 문자열을 다른 문자열로 치환하는 함수
+치환할 문자열이 없는경우 alt_s 는 NULL, alt_len 은 0으로 설정
+target		: 작업할 문자열
+target_size : 작업할 문자열의 길이
+start_p		: 치환될 문자열의 시작지점
+end_p		: 치환될 문자열의 끝 지점
+alt_s		: 치환할 문자열
+alt_len		: 치환할 문자열의 길이
+rs			: 변경된 정도를 저장하는 변수의 주소(추가될 길이 - 삭제될 길이)
+반환 값		: 오류 0, 정상 1
+*/
+int string_convert(char **target, int *target_size, int start_p, int end_p, const char *alt_s, int alt_len, int *rs);
+
+/*
+문자열에서 태그를 찾아주는 함수
+target_file : 탐색할 문자열
+target_size : 문자열의 총 길이
+start		: 탐색을 시작할 위치
+tag_start	: 태그의 시작점을 저장할 변수의 주소
+tag_end		: 태그의 끝점을 저장할 변수의 주소
+반환 값		: 오류 0, 성공 1
+*/
+int find_tag(char* target_file, int target_size, int start, int* tag_start, int* tag_end);
+/*
+태그에서 태그의 이름을 찾는 함수
+tag		 : 탐색할 태그
+tag_size : 태그의 길이
+name_s	 : 이름의 처음 부분의 위치
+name_e	 : 이름의 마지막 부분의 위치
+*/
+int tag_name(char* tag, int tag_size, int* name_s, int* name_e);

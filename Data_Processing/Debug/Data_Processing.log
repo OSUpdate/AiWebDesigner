@@ -1,12 +1,41 @@
 ﻿  css_link_convert.cpp
-c:\users\cbnm9\desktop\cprogram\data_processing\css_link_convert.cpp(32): warning C4101: 'ck' :참조되지 않은 지역 변수입니다.
-c:\users\cbnm9\desktop\cprogram\data_processing\css_link_convert.cpp(225): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(1774): note: 'sprintf' 선언을 참조하십시오.
-c:\users\cbnm9\desktop\cprogram\data_processing\css_link_convert.cpp(245): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(208): note: 'fopen' 선언을 참조하십시오.
-c:\users\cbnm9\desktop\cprogram\data_processing\css_link_convert.cpp(286): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(1774): note: 'sprintf' 선언을 참조하십시오.
-c:\users\cbnm9\desktop\cprogram\data_processing\css_link_convert.cpp(289): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(1774): note: 'sprintf' 선언을 참조하십시오.
-c:\users\cbnm9\desktop\cprogram\data_processing\css_link_convert.cpp(236): warning C4715: 'css_converting': 모든 제어 경로에서 값을 반환하지는 않습니다.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\css_link_convert.cpp(120,13): warning C4552:  '+': 식의 결과가 사용되지 않습니다.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\css_link_convert.cpp(192,9): warning C4101:  'ck' :참조되지 않은 지역 변수입니다.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\css_link_convert.cpp(244,1): warning C4996:  'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message :  'sprintf' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\css_link_convert.cpp(269,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\css_link_convert.cpp(321,1): warning C4996:  'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  file_check.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message :  'sprintf' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_check.cpp(32,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_check.cpp(151,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_check.cpp(208,1): warning C4996:  'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  file_convert.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message :  'sprintf' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_convert.cpp(5,1): warning C4996:  'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message :  'sprintf' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_convert.cpp(18,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_convert.cpp(47,1): warning C4996:  'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message :  'sprintf' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_convert.cpp(55,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_convert.cpp(387,9): warning C4101:  'ck' :참조되지 않은 지역 변수입니다.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_convert.cpp(441,1): warning C4996:  'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message :  'sprintf' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\file_convert.cpp(462,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  utility.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\utility.cpp(144,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\utility.cpp(164,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\utility.cpp(196,1): warning C4996:  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(208): message :  'fopen' 선언을 참조하십시오.
+C:\Users\cbnm9\Desktop\CProgram\Data_Processing\utility.cpp(225,1): warning C4996:  'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  코드를 생성하고 있습니다...
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message :  'sprintf' 선언을 참조하십시오.
   Data_Processing.vcxproj -> C:\Users\cbnm9\Desktop\CProgram\Debug\Data_Processing.exe
