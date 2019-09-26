@@ -3,11 +3,9 @@ import pickle
 import random
 
 # 군집화 데이터(pickle 파일의 경로)
-#pk_path = 'C:/Users/cbnm9/Downloads/python/data/clusters.pickle'
 pk_path = './data/clusters.pickle'
 # Selector 클래스 - 군집화 데이터에 대한 선택 작업하는 객체
 class Selector:
-
     # Selector 객체 생성
     def __init__(self):
         self.clusters  = self.load_clusters(path=pk_path)
@@ -20,7 +18,7 @@ class Selector:
             data = pickle.load(f)
         return data
 
-    # all_files 변수
+    # self.all_files 변수 설정
     def set_all_files(self):
         # self.all_files 는 사전 자료구조
         d={}
@@ -46,6 +44,7 @@ class Selector:
         for i in keys:
             print('{}: {}'.format(i, self.clusters[i]))
 
+    # 추천할 템플릿 이름들 만들기
     def make_numbs(self, pre_list, num):
         numbs = []
 
@@ -57,7 +56,6 @@ class Selector:
             for _ in range(self.noc): numbs.append(need)
             return numbs
         
-        # 이곳이 실행된다면 pre_list가 주어진 것
         print('Selected recommend')
         # pre_list에 대해 각 클래스가 몇개씩 선택됬는지 확인
         sel = [0]*self.noc
@@ -65,14 +63,12 @@ class Selector:
         for name in pre_list:
             name=int(name)
             sel[self.all_files[name]] += 1
-        
         print('sel count: ', sel)
 
         # sel 중 0의 값을 가진것이 있는지 확인
         cnt = 0
         for n in sel:
             if n == 0: cnt += 1
-
         print('empty sum: ', cnt)
 
         # 추천할 갯수 조정
@@ -96,14 +92,14 @@ class Selector:
             a = num - sum(sel)
             sel[max_i] += a
 
-        # numbs 만들기
+        # numbs 만들고 반환
         for i in range(len(sel)):
             n = sel[i]
             if n == 0: numbs.append(2)
             else     : numbs.append(n)
-
         return numbs
 
+    # 숫자로만 표현된 추천리스트(numbs)를 이름 표현으로 바꾸는 함수
     def make_names(self, numbs):
         names=[]
 
@@ -129,6 +125,9 @@ class Selector:
         
         # 추천할 파일 이름 리스트 반환
         return names
+
+    # 입력받은 정보에 대해 추천할 리스트를 사전구조로 만들어 반환하는 함수
+    # JSON 형식으로 데이터 전송할 때 사전구조가 쓰여서 이 함수를 사용한다
     def get_dict(self, pre_list=None, num=50):
         numbs=[]
         names=[]
