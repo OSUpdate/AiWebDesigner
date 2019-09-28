@@ -6,23 +6,28 @@ import json
 from database import Database
 import random
 
-
-
 # 서버의 동작에 사용되는 객체들
 app = Flask(__name__)
 mysql = MySQL()
 sel = selector.Selector()
 print('-- object create complete --')
 
+# 템플릿의 이름들이 저장될 리스트
 templates = []
+# 템플릿 스크린샷의 이름들이 저장될 리스트
 images = []
 
+# 서버와 DB 연결
 mysql.init_app(app)
+
+# 토큰으로 DB를 조회해 UID 얻기
 def getUid(token):
     db = Database()
     sql = "select uid from logged where token = %s"
     row = db.executeOne(sql, token)
     return row
+
+# 템플릿과 스크린샷을 찾아서 리스트에 넣기
 def search(dirname):
     filenames = os.listdir(dirname)
     for filename in filenames:
@@ -30,38 +35,22 @@ def search(dirname):
             continue
         templates.append(filename)
         images.append("png/"+filename+".png")
+
+# 사용자의 작업했던 파일 리스트 반환
 def userDir(user):
     fileList = os.listdir("../nodejs/user/"+user)
     return list(filter(lambda x: x if x.isdigit() else False, fileList))
-def getRecommend(pre_list=None): #============================================ 여기가 추천 템플릿 만들어주는 곳
-    #인공지능 추천 템플릿을 가져옴
-    # 추천 템플릿의 이름 리스트를 줌
-    '''
-    recommend = []
-    for i in range(0,9):
-        recommend.append(templates[random.randint(1,342)])
-    '''
+
+# 제공되는 선택 기록에 따라 추천 템플릿의 이름 리스트 반환
+def getRecommend(pre_list=None):
     # 추천 템플릿의 숫자 이름들 반환
     recommend = []
-    #recommend = sel.get_list(pre_list=pre_list, num=50)
     data = sel.get_dict(pre_list=pre_list, num=50)
     print(data)
-    '''
-    for i in range(0,9):
-        names.append(random.randint(1,342))
-    '''
     
-    # 추천 템플릿 리스트 만들기
-    '''
-    recommend = []
-    for name in names:
-        recommend.append(templates[name])
-    '''
-    
-    #print('recommend: ', recommend)
-
     return data
 
+# 인자로 받은 템플릿들에 대한 스크린샷 이름 리스트 반환
 def getPngs(names):
     pngs=[]
 
@@ -70,9 +59,10 @@ def getPngs(names):
 
     return pngs
 
+# 사용자가 로그인시 처음으로 추천하는 템플릿 리스트 만들어주는 부분
 @app.route("/api/get/<token>", methods=['POST'])
 def recommend(token):
-
+    # 사용자의 UID 얻기
     uid = getUid(token)
     if not uid['uid']:
         data = {
@@ -85,9 +75,11 @@ def recommend(token):
         json_data = json.dumps(data)
         return json_data
 
-    userList = userDir(request.get_json(silent=True)['request']['user']) #사용자가 작업한 템플릿 이름 리스트
+    # 사용자의 작업하던 템플릿 리스트 가져오기
+    userList = userDir(request.get_json(silent=True)['request']['user'])
     print()
     print('---<first_recommend>---')
+    # 사용자의 작업하던 템플릿 리스트 정보를 통해 추천할 템플릿 리스트 만들기
     data = {
         "Response": {
             "response": {
@@ -101,18 +93,10 @@ def recommend(token):
     json_data = json.dumps(data)
     return json_data
 
+# 여러 디자인 선택한 정보로 추천 템플릿 리스트 만들기
 @app.route("/api/templates/<token>", methods=['POST'])
 def get(token):
-    #request.get_json() #요청온 json 꺼냄
-    #request.get_json(silent=True)
-    #conn = mysql.connect()
-    #cursor = conn.cursor()
-    #cursor.execute() # select 문으로 조회
-
-    #cursor.callproc("함수명", 인자) 데이터베이스에 저장된 프로시저(함수) 이용할 경우
-
-    #data = cursor.fetchall() #결과값을 받아옴
-
+    # 사용자의 UID 얻기
     uid = getUid(token)
     if not uid['uid']:
         data = {
@@ -125,64 +109,16 @@ def get(token):
         json_data = json.dumps(data)
         return json_data
 
-
-    '''
-    #성공시 실행
-    if len(data) > 0:
-        templates = [1, 2, 3, 4]
-        images = [1, 2, 3, 4]
-        data = {
-            "Response": {
-                "response": {
-                    "result": True,
-                    "templates": templates,
-                    "image": images
-                }
-            }
-        }
-        json_data = json.dumps(data)
-        return json_data
-
-    #동일한 토큰값이 없을 경우 실행
-    data = {
-        "Response": {
-            "response": {
-                "result": False,
-            }
-        }
-    }
-    json_data = json.dumps(data)
-    return json_data
-    '''
-    '''
-    try:
-        if not request.is_json:
-            raise DataValidationError('Invalid payment: Content Type is not json')
-        data = request.get_json()
-    except DataValidationError as e:
-        fail = {
-            "Response": {
-                "response": {
-                    "result": False
-                }
-            }
-        }
-        json_data = json.dumps(fail)
-        return json_data
-
-    '''
-    #userList = userDir(request.get_json(silent=True)['request']['user']) 사용자가 작업한 템플릿 이름 리스트
     print()
     print('-<selected_recommend>--')
+    # 사용자가 선택한 여러개의 템플릿 이름 리스트 얻기
     select = (request.get_json(silent=True))['request']['name']
     print('selected templates: ', select)
+    # 사용자의 선택 정보를 통해 추천 템플릿 리스트 만들기
     recommend = getRecommend(select)
+    # 추천 템플릿 리스트에 따른 스크린샷 리스트 만들기
     pngs = getPngs(recommend['recommend'])
-
-    #템플릿 관련 정보 파일이름형태로 전송
-    #templates = ["1.html","2.html","3.html","4.html","5.html","6.html","7.html","8.html","9.html","10.html"]
-    #images = ["img/src/1.jpg","img/src/2.jpg","img/src/3.jpg","img/src/4.jpg","img/src/5.jpg","img/src/6.jpg","img/src/7.jpg","img/src/8.jpg","img/src/9.jpg","img/src/10.jpg"]
-    
+    # 추천 템플릿 리스트와 스크린샷 리스트를 JSON 형식으로 만들기
     data = {
         "Response":{
             "response":{
@@ -198,41 +134,6 @@ def get(token):
 
 @app.route("/api/save/<token>", methods=['POST'])
 def set(token):
-    #conn = mysql.connect()
-    #cursor = conn.cursor()
-    #cursor.execute() # select 문으로 조회
-
-    #cursor.callproc("함수명", 인자) 데이터베이스에 저장된 프로시저(함수) 이용할 경우
-
-    #data = cursor.fetchall() #결과값을 받아옴
-    '''
-    #성공시 실행
-    if len(data) > 0:
-        templates = [1, 2, 3, 4]
-        images = [1, 2, 3, 4]
-        data = {
-            "Response": {
-                "response": {
-                    "result": True,
-                    "templates": templates,
-                    "image": images
-                }
-            }
-        }
-        json_data = json.dumps(data)
-        return json_data
-
-    #동일한 토큰값이 없을 경우 실행
-    data = {
-        "Response": {
-            "response": {
-                "result": False,
-            }
-        }
-    }
-    json_data = json.dumps(data)
-    return json_data
-    '''
     print(request.json)
 
     #템플릿 관련 정보 파일이름형태로 전송

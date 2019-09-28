@@ -23,32 +23,32 @@
     <ProjectGuid>{54BE0AC3-D4B1-4D96-8F33-6EE197E83255}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DataProcessing</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -140,19 +140,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="css_link_convert.cpp" />
+    <ClCompile Include="error_data_move.cpp" />
+    <ClCompile Include="file_check.cpp" />
     <ClCompile Include="file_convert.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="organize_folder.cpp" />
     <ClCompile Include="rename_data.cpp" />
+    <ClCompile Include="roll_back.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="css_link_convert.h" />
+    <ClInclude Include="error_data_move.h" />
+    <ClInclude Include="file_check.h" />
     <ClInclude Include="file_convert.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="organize_folder.h" />
     <ClInclude Include="rename_data.h" />
+    <ClInclude Include="roll_back.h" />
     <ClInclude Include="super_header.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>

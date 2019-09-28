@@ -1,0 +1,7 @@
+https://drive.google.com/drive/folders/1TbfJck6GHRjCddF2e7EXPhnQksMRNjZi?usp=sharing
+
+Templates : 위 링크의 Templates2를 받아서 내부의 Templates폴더로
+AiWebDesigner-master\AiWebDesigner-master\nodejs\routes\api 위치의 Templates를 덮어쓰기
+
+png : 위 링크의 png2를 받아서 내부의 png 폴더를 받어서 내부의 png폴더로
+AiWebDesigner-master\AiWebDesigner-master\nodejs 위치의 png를 덮어쓰기

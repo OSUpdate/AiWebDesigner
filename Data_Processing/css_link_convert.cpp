@@ -1,193 +1,214 @@
 #include "super_header.h"
 
-// 작업 할 html 처음과 마지막 폴더 이름
-#define START 1
-#define END   342
+int dumy_func_for_css(char** target_file, int* target_size, int tag_start, int tag_end, int* point, char* css_head) {
+	*point = tag_end + 1;
+	return 1;
+}
 
-int link_processing(char *link_tag, int len, FILE *copy_file, char *css_head) {
+int link_processing(char **target_file, int *target_size, int tag_start, int tag_end, int *point, char *css_head) {
+	// css_head 의 길이 계산하기
+	int css_len = strlen(css_head);
 
-	int start_point, end_point;
-	int in_href = 0;
-	int do_process = 0;
+	// 특별한 일 없이 바로 반환될 경우 지정될 포인트의 값 설정
+	*point = tag_end + 1;
+
+	// 태그와 그 길이 설정
+	char *tag = &((*target_file)[tag_start]);
+	int tag_len = tag_end - tag_start + 1;
 
 	// link 태그의 href="~~" 부분의 ~~ 찾기
-	in_href = find_href_position(link_tag, len, &start_point, &end_point);
+	int start_point, end_point;
+	int in_href = find_href_position(tag, tag_len, &start_point, &end_point);
 
-	// href 속성이 없을 때 해당 link 태그 부분 그대로 쓰고 나가기
+	// href 속성이 없을 때 함수 반환, 이 경우 오류는 아님
 	if (!in_href) {
-		fwrite(link_tag, 1, len, copy_file);
 		return 1;
 	}
 
-	// 링크태그 쓰기
-	fwrite(link_tag, 1, start_point, copy_file);
-	fwrite(css_head, 1, strlen(css_head), copy_file);
-	fwrite(&(link_tag[start_point]), 1, len - start_point, copy_file);
-
-	return 1;
-}
-
-int find_link(char *target_file, int target_size, FILE *copy_file, int *index, int *point, char *css_head) {
-	int i = *index;
-	int ck, start_point, end_point;
-
-	// 'link'인지 확인하기, 아니면 0 반환
-	if (!isEqual(i, target_file, "link")) return 0;
-
-	// '<'를 start_point로 지정
-	start_point = i - 1;
-
-	// link문 이전까지 쓰기
-	fwrite(&(target_file[*point]), 1, start_point - *point, copy_file);
-
-	// '>' 기호 찾기
-	for (; i < target_size; i++) {
-		if (target_file[i] == '>')
-			break;
-	}
-	end_point = i;
-
-	// i 증가 -> i는 link 태그의 마지막 '>' 다음 문자를 가리킴
-	i++;
-
-	// 만약 위 반복문이 다도는 동안 '>'가 없다면
-	if (i >= target_size) {
-		printf("'>' find error\n");
-		return -1;
+	// href 속성의 값이 http:// 또는 https:// 인 경우 그대로 두기(함수 반환)
+	char *val = &(tag[start_point]);
+	if (val[0] == 'h') {
+		if (isEqual(0, val, "http://"))
+			return 1;
+		if (isEqual(0, val, "https://"))
+			return 1;
 	}
 
-	// link문에 대한 처리작업 진행
-	if (!link_processing(&(target_file[start_point]), end_point - start_point + 1, copy_file, css_head))
-		return -1;
-
-	// link 태그 처리작업 완료 후 인덱스 값, point 최신화 후 1 반환
-	*index = i;
-	*point = i;
-	return 1;
-}
-
-int style_processing(char *style_tag, int len, FILE *copy_file, char *css_head) {
-
-	int i;
-	int point = 0;
-	for (i = 0; i < len; i++) {
-		// @ 발견시
-		if (style_tag[i] == '@') {
-			i++;
-			// import 인지 확인
-			if (isEqual(i, style_tag, "import")) {
-				i += 6;
-				// 첫 번째 " 찾기
-				for (; i < len; i++)
-					if (style_tag[i] == '"') break;
-				//  첫 번째 " 까지 쓰기
-				fwrite(&(style_tag[point]), 1, i - point + 1, copy_file);
-				point = i + 1;
-				// 링크 앞에 붙여야 할 거 쓰기
-				fwrite(css_head, 1, strlen(css_head), copy_file);
-			}
-		}
-	}
-
-	// 나머지 style 태그 쓰기
-	fwrite(&(style_tag[point]), 1, len - point, copy_file);
-	return 1;
-}
-
-int find_style(char *target_file, int target_size, FILE *copy_file, int *index, int *point, char *css_head) {
-	int i = *index;
-	int start_point, end_point;
-
-	// 'style'인지 확인하기, 아니면 0 반환
-	if (!isEqual(i, target_file, "style")) return 0;
-
-	// < 를 start_point로 지정
-	start_point = i - 1;
-
-	// style 태그 이전까지 쓰기
-	fwrite(&(target_file[*point]), 1, start_point - *point, copy_file);
-
-	i += 5;
-
-	// style 태그의 마지막 위치 찾고, 처리하기
-	for (; i < target_size - 1; i++) {
-		// 먼저 '</' 찾기
-		if ((target_file[i] == '<') && (target_file[i + 1] == '/')) {
-			i += 2;
-
-			// </style 이라면
-			if (isEqual(i, target_file, "style")) {
-				// i가 > 이후를 가리키게 하기
-				i += 6;
-				end_point = i - 1;
-				// <style> 태그에 대한 처리작업 진행
-				if (!style_processing(&(target_file[start_point]), end_point - start_point + 1, copy_file, css_head))
-					return -1;
-
-				// 반복문 나가기
-				break;
-			}
-		}
-	}
-
-	// 만약 위 반복문이 다도는 동안 '>'가 없다면
-	if (i >= target_size - 1) {
-		printf("</style> find error\n");
-		return -1;
-	}
-
-	// style 태그 처리작업 완료 후 인덱스 값, point 최신화 후 1 반환
-	*index = i;
-	*point = i;
-	return 1;
-}
-
-int css_head_processing(char *target_file, int target_size, FILE *copy_file, int *index, char *css_head) {
-	// 반복제어, 오류확인 변수
-	int i, ck;
-	// 인덱스 증가하기 전 위치 저장하는 변수
-	int point = 0;
-
-	// 원본파일에 대한 처리 시작
-	for (i = 0; i < target_size; i++) {
-
-		// '<' 기호 찾기
-		if (target_file[i] == '<') {
-			// i 증가 -> i는 '<' 이후 문자를 가리킴
-			i++;
-
-			// '<' 다음 '/' 문자가 오면 </head 인지 확인하기
-			if (target_file[i] == '/') {
-				// i 증가 -> i는 '/' 이후 문자를 가리킴
-				i++;
-
-				// </head>인지 확인, file_convert.h 의 함수
-				ck = find_end_of_head(target_file, target_size, &i);
-				if (ck == 1) {
-					fwrite(&(target_file[point]), 1, i - point, copy_file);
-					break;
-				}
-			}
-			else {
-				// link 태그인지 확인
-				ck = find_link(target_file, target_size, copy_file, &i, &point, css_head);
-				// link 태그가 아니라면 style 태그인지 확인
-				if (ck == 0) ck = find_style(target_file, target_size, copy_file, &i, &point, css_head);
-
-				// 오류 발생시 0 반환
-				if (ck == -1) return 0;
-			}
-		}
-	}
-
-	// 이 함수에서 원본 파일을 다 돌았다면 오류
-	if (i >= target_size) {
-		printf("There is no <body> ?? \n");
+	// href 속성의 값 앞에 css_head 붙여주기
+	int rs;
+	int conv_s = start_point + tag_start;
+	if (!string_convert(target_file, target_size, conv_s, conv_s - 1, css_head, css_len, &rs)) {
+		printf("link_processing string_convert error\n");
 		return 0;
 	}
 
-	// 인덱스 값 최신화 후 1 반환
-	*index = i;
+	// 포인트 설정 후 반환
+	*point = tag_end + rs + 1;
+	return 1;
+}
+
+int style_processing(char **target_file, int *target_size, int tag_start, int tag_end, int *point, char *css_head) {	
+	// css_head 의 길이 계산하기
+	int css_len = strlen(css_head);
+	
+	// 특별한 일 없이 바로 반환될 경우 지정될 포인트의 값 설정
+	*point = tag_end + 1;
+
+	// string_convert의 매개변수로 전달하기 위한 변수
+	int rs;
+
+	// </style> 까지 import 가 있는지 찾아내 처리하기
+	int i;
+	int ck_v;
+	for (i = tag_end + 1; i < *target_size; i++) {
+		// 1. </style> 일때 반복문 나가기
+		if ((*target_file)[i] == '<') {
+			i++;
+			if ((*target_file)[i] == '/') {
+				i++;
+				if ((*target_file)[i] == 's') {
+					if (isEqual(i, *target_file, "style"))
+						break;
+				}
+			}
+		}
+		// 2. @ 일때 import 인지 확인하고 처리하기
+		else if ((*target_file)[i] == '@') {
+			i++;
+			if ((*target_file)[i] == 'i') {
+				// import 일 때
+				if (isEqual(i, *target_file, "import")) {
+					// i는 u 또는 "를 가리킴
+					i += 7;
+
+					// u 일때
+					if ((*target_file)[i] == 'u') {
+						// i는 '(' 다음을 가리킴
+						i += 4;
+						// '(' 다음문자 구하기
+						char c = (*target_file)[i];
+
+						// c가 영어 문자가 아니면 i를 하나 증가시키기
+						// 그러면 i는 첫 번째 문자 위치를 가리킴
+						if (!isChar(c))
+							i++;
+					}
+					// " 일때
+					else {
+						// i 증가시키면 첫 번째 문자 가리킴
+						i++;
+					}
+
+					// import의 값이 http:// 또는 https:// 인 경우는 제외시키기
+					ck_v = 1;
+					if ((*target_file)[i] == 'h') {
+						if (isEqual(i, *target_file, "http://"))
+							ck_v = 0;
+						if (isEqual(i, *target_file, "https://"))
+							ck_v = 0;
+					}
+
+					// 위 경우가 아니라면 " 다음위치에 css 헤드 넣기
+					if (ck_v) {
+						if (!string_convert(target_file, target_size, i, i - 1, css_head, css_len, &rs)) {
+							printf("style_processing string_convert error\n");
+							return 0;
+						}
+					}
+
+					// i 다시 설정: ';' 다음을 가리키기
+					for (i + rs; i < *target_size; i++)
+						if ((*target_file)[i] == ';') break;
+					i++;
+				}
+			}
+		}
+	}
+
+	// 위의 반복문이 끝났을 때 i + 6 은 </style> 다음을 가리킴
+	*point = i + 6;
+
+	// 여기까지 오류가 없었다면 1 반환
+	return 1;
+}
+
+int(*css_tag_check(char *tag, int tag_len)) (char**, int*, int, int, int*, char *) {
+	// 태그 이름의 길이 가져오기
+	int name_s, name_e;
+	if (!tag_name(tag, tag_len, &name_s, &name_e))
+		return NULL;
+
+	// 이름 길이 계산
+	int name_len = name_e - name_s + 1;
+
+	// 태그 이름의 시작지점 설정
+	char *tag_name = &(tag[name_s]);
+
+	// 태그 이름 별 처리할 함수 반환하기
+	if (name_len == 4) {
+		if (isEqual(0, tag_name, "link"))
+			return link_processing;
+	}
+	else if (name_len == 5) {
+		if (isEqual(0, tag_name, "style"))
+			return style_processing;
+	}
+
+	return dumy_func_for_css;
+}
+
+int css_tag_processing(char **target_file, int *target_size, int tag_start, int tag_end, int *point, char *css_head) {
+	// 태그의 시작위치
+	char *tag_p;
+	// 태그의 길이
+	int tag_len;
+	// 태그의 종류별 수행될 함수
+	int(*tag_func) (char**, int*, int, int, int*, char*);
+
+	// 태그의 시작위치와 태그의 길이 설정
+	tag_p = &((*target_file)[tag_start]);
+	tag_len = tag_end - tag_start + 1;
+
+	// 태그 종류 별 수행될 함수 가져오기
+	tag_func = css_tag_check(tag_p, tag_len);
+
+	// 함수가 NULL 이라면 아무 처리 없이 넘어가는 것
+	if (tag_func == NULL) {
+		// 이 때 point 는 태그의 마지막 바로 뒤를 가리킴
+		*point = tag_end + 1;
+		return 1;
+	}
+
+	// 태그 종류 별 함수 호출하기
+	if (!tag_func(target_file, target_size, tag_start, tag_end, point, css_head))
+		return 0;
+
+	// 이 함수가 오류없이 끝나면 1 반환
+	return 1;
+}
+
+int css_head_processing(char **target_file, int *target_size, FILE *copy_file, char *css_head) {
+	// 반복제어, 오류확인 변수
+	int i, ck;
+	
+	// target_file에서 태그의 시작과 끝 인덱스
+	int tag_start, tag_end;
+
+	// 타겟파일 모두 다 읽을 때 까지 반복
+	for (i = 0; i < *target_size;) {
+		// 태그 찾기, 파일을 모두 읽었다면 is_end에 0이 저장됨
+		if (!find_tag(*target_file, *target_size, i, &tag_start, &tag_end))
+			return 0;
+
+		// 파일이 끝났다면 반복문 나가기
+		if (tag_end == 0) break;
+
+		// 태그에 대해 처리하기
+		if (!css_tag_processing(target_file, target_size, tag_start, tag_end, &i, css_head)) {
+			return 0;
+		}
+	}
+
 	return 1;
 }
 
@@ -197,21 +218,19 @@ int css_processing(char *target_dir, char* css_head) {
 
 	FILE *copy_file;
 
-	int index;
-
 	// 1. 파일 열기(대상 파일, 복사할 파일), file_convert.h 의 함수 그대로 사용
-	if (!file_open(&target_file, &target_size, &copy_file, target_dir))
+	if (!file_open(&target_file, &target_size, &copy_file, target_dir, "origin_css.html"))
 		return 0;
 
-	// 2. <head> 태그 내 내용 처리
-	if (!css_head_processing(target_file, target_size, copy_file, &index, css_head)) {
+	// 2. css 관련 태그 내 내용 처리
+	if (!css_head_processing(&target_file, &target_size, copy_file, css_head)) {
 		free(target_file);
 		fclose(copy_file);
 		return 0;
 	}
 
-	// 3. 나머지 부분 모두 쓰기
-	fwrite(&(target_file[index]), 1, target_size - index, copy_file);
+	// 3. copy_file에 target_file 쓰기
+	fwrite(target_file, sizeof(char), target_size, copy_file);
 
 	// 파일 하나에 대한 처리 완료
 	free(target_file);
@@ -231,8 +250,13 @@ int css_converting(char* dir, int num, char* css_head) {
 		// 오류 반환
 		return 0;
 	}
-	else
-		printf("%d: Complete\n", num);
+	
+	// 100개의 파일 처리마다 얼마나 처리했는지 출력
+	if (num % 100 == 0) {
+		printf("[%d] Complete\n", num);
+	}
+
+	return 1;
 }
 
 int get_css_head(char* head) {
@@ -269,6 +293,7 @@ void css_link_convert() {
 		system("pause");
 		return;
 	}
+	printf("Target dir: %s\n", dir);
 
 	// css 링크 앞에 붙일 문자열 가져오기
 	char css_head_one[200];
@@ -276,23 +301,37 @@ void css_link_convert() {
 		system("pause");
 		return;
 	}
+	printf("css head: %s\n", css_head_one);
 
-	char html[300] = { 0 };
+	// 작업할 폴더의 시작이름과 마지막 이름 구하기
+	int start, end;
+	if (!get_folder_list(dir, &start, &end)) {
+		system("pause");
+		return;
+	}
+	printf("Target: %d ~ %d\n", start, end);
+
+	// 모든 폴더에 대해 반복하며 작업
+	int error_list[2000];
+	int error_idx = 0;
 	char css_head[200];
-	int i = START;
-	for (; i < END + 1; i++) {
-
-		// html 파일 이름: 폴더경로\\index.html
-		sprintf(html, "%s%s%d%s", dir, "\\", i, "\\index.html");
-
+	int i = start;
+	for (; i < end + 1; i++) {
 		// 폴더 이름 별 다른 css_head 적용
 		sprintf(css_head, "%s%d%s", css_head_one, i, "/");
 
 		// 해당 html 파일에 대한 처리
 		if (!css_converting(dir, i, css_head)) {
-			system("pause");
+			error_list[error_idx++] = i;
 		}
 	}
+
+	// 오류가 발생한 리스트 파일에 저장
+	if (!error_recode_for_convert(error_list, error_idx))
+		system("pause");
+
+	// 오류 갯수 출력
+	printf("Error: %d\n", error_idx);
 
 	// 모든 작업 완료
 	printf("css_link_convert complete\n");

@@ -7,7 +7,6 @@ const path = require("path");
 var ncp = require("ncp").ncp;
 var archiver = require("archiver");
 var router = express.Router();
-const fileUrl = require("file-url");
 const btnReadline = require("readline").createInterface({
     input: require("fs").createReadStream(__dirname+"/a.html")
 });
