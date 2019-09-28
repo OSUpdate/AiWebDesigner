@@ -310,7 +310,7 @@ export default applyPenders(reducer, [
             if(status === 401 && !post.Response.response.result){
                 return state.setIn(["message", "modal"], true)
                     .setIn(["message", "title"],"Error")
-                    .setIn(["message", "content"],post.Response.response.error)
+                    .setIn(["message", "content"],"비밀번호 찾기에 실패했습니다.")
                     .setIn(["findPw",0,"value"], "")
                     .setIn(["findPw",1,"value"], "");
             }
