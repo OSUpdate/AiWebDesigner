@@ -166,6 +166,15 @@ class SignUpListContainer extends Component {
             this.handleLogoutFail();
         }
     }
+    handleEnterKey = (e)=>{
+        const {toggle} = this.props;
+        if(e.key !== "Enter") return;
+        if(toggle)
+            this.handleSignUp();
+        else
+            this.handleSignIn();
+
+    };
     /* 회원가입 버튼 onClick 함수 */
     handleSignUp = async () => {
         const {SignActions, signUp} = this.props;
@@ -203,6 +212,13 @@ class SignUpListContainer extends Component {
     /* 로그인 버튼 onClick 함수 */
     handleSignIn = async () => {
         const {SignActions, signIn} = this.props;
+        const valueList = signIn.filter(
+            (item)=>{
+                return item.get("value") === "";
+            }
+        );
+        if( valueList.size > 0)
+            return;
         try{
             await SignActions.signIn(
                 signIn.getIn([0,"value"]),
@@ -352,7 +368,8 @@ class SignUpListContainer extends Component {
             handleSignInChange,
             handleLogout,
             handleCloseError,
-            handleSignUp
+            handleSignUp,
+            handleEnterKey
         } = this;
 
 	    return (
@@ -368,7 +385,7 @@ class SignUpListContainer extends Component {
                     </React.Fragment>
                     :
                     <React.Fragment>
-                        <li>
+                        <li onKeyDown={handleEnterKey}>
                             <a onClick={signUpOpenModal} id="usign">회원가입</a>
                         
                             <Modal

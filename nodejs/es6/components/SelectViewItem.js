@@ -86,7 +86,9 @@ class SelectViewItem extends Component {
                             <i onClick={openModal} className={styles.fa_plus}><FontAwesomeIcon icon={faPlus} size="3x"/></i>
                         </div>
                     </div>
-                    <img id="test" ref={element => this.test=element} className="img-responsive" src={src} />
+                    <div className={styles.cropping}>
+                        <img id="test" ref={element => this.test=element} className="img-responsive" src={src} />
+                    </div>
                     
                 </a>
                 

@@ -208,7 +208,7 @@ const signin = async (res, req) => {
             shasum.update(req.body.request.password);
             const pw = shasum.digest("hex");
             const [rows] = await connection.query("select * from userinfo where id = ? and password = ?", [req.body.request.id, pw]);
-            if(!rows)
+            if(!Object.keys(rows).lengths)
                 return res.status(401).json({
                     Response: {
                         response: {

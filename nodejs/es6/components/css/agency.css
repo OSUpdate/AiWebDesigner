@@ -2533,3 +2533,13 @@ body {
   height: 225px;
   width: 450px;
 }
+.cropping {
+  max-height: 180px;
+  min-height: 180px;
+  overflow: hidden;
+}
+.cropping img{
+  max-height: initial;
+
+
+}
