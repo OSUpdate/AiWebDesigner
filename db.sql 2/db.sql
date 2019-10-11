@@ -1,3 +1,4 @@
+
 create database aws;
 use aws;
 create table userinfo(
@@ -32,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `aws`.`history` (
   `uid` VARCHAR(45) NOT NULL,
   `logged_uid` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`num`, `logged_uid`),
-  INDEX `fk_history_logged1_idx` (`logged_uid` ASC) VISIBLE,
+  INDEX `fk_history_logged1_idx` (`logged_uid` ASC),
   CONSTRAINT `fk_history_logged1`
     FOREIGN KEY (`logged_uid`)
     REFERENCES `aws`.`logged` (`uid`)
@@ -47,9 +48,9 @@ CREATE TABLE IF NOT EXISTS `aws`.`category` (
   `file_num` INT NOT NULL,
   `add_num` INT NOT NULL,
   PRIMARY KEY (`num`, `history_num`, `file_num`, `add_num`),
-  INDEX `fk_category_history_idx` (`history_num` ASC) VISIBLE,
-  INDEX `fk_category_file1_idx` (`file_num` ASC) VISIBLE,
-  INDEX `fk_category_add1_idx` (`add_num` ASC) VISIBLE,
+  INDEX `fk_category_history_idx` (`history_num` ASC),
+  INDEX `fk_category_file1_idx` (`file_num` ASC),
+  INDEX `fk_category_add1_idx` (`add_num` ASC),
   CONSTRAINT `fk_category_history`
     FOREIGN KEY (`history_num`)
     REFERENCES `aws`.`history` (`num`)
